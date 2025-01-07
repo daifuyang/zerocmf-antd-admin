@@ -35,7 +35,7 @@ export async function getRole(
   params: API.getRoleParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { roleId: param0, ...queryParams } = params;
   return request<API.Response>(`/api/v1/admin/roles/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
@@ -50,7 +50,7 @@ export async function updateRole(
   body: API.Role,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { roleId: param0, ...queryParams } = params;
   return request<API.Response>(`/api/v1/admin/roles/${param0}`, {
     method: 'POST',
     headers: {
@@ -68,7 +68,7 @@ export async function deleteRole(
   params: API.deleteRoleParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { roleId: param0, ...queryParams } = params;
   return request<API.Response>(`/api/v1/admin/roles/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },

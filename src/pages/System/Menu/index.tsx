@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Button, Divider, Space, Tag, Tooltip } from 'antd';
+import { Button, Divider, Dropdown, Space, Tag, Tooltip } from 'antd';
 import { useRef } from 'react';
 import SaveForm from './saveForm';
 import { getMenus } from '@/services/ant-design-pro/menus';
@@ -10,7 +10,7 @@ type MenuItem = {
   id: number;
   name: string;
   icon: string;
-  order: number;
+  sortOrder: number;
   permission: string;
   component: string;
   status: string;
@@ -48,7 +48,7 @@ const columns: ProColumns<MenuItem>[] = [
   },
   {
     title: '排序',
-    dataIndex: 'order',
+    dataIndex: 'sortOrder',
     valueType: 'digit',
     hideInSearch: true,
     sorter: true,
@@ -90,26 +90,41 @@ const columns: ProColumns<MenuItem>[] = [
   },
   {
     title: '操作',
-    width: 170,
+    width: 240,
     valueType: 'option',
     key: 'option',
     render: (text, record, _, action) => {
       return (
         <Space split={<Divider type="vertical" />}>
-          <a
-            key="editable"
-            onClick={() => {
-              action?.startEditable?.(record.id);
-            }}
-          >
-            编辑
-          </a>
-          <a href={`/menu/${record.id}`} key="view">
-            查看
-          </a>
-          <a style={{ color: '#ff4d4f' }} href={`/menu/${record.id}`} key="delete">
+          <SaveForm title="编辑菜单" key="editable" initialValues={record}>
+            <a>
+              编辑
+            </a>
+          </SaveForm>
+          <a style={{ color: '#ff4d4f' }} key="delete" onClick={() => { }}>
             删除
           </a>
+          <Dropdown
+            key="menu"
+            menu={{
+              items: [
+                {
+                  label: <SaveForm title="查看菜单" initialValues={record} readOnly>
+                    <a key="view">
+                      查看
+                    </a>
+                  </SaveForm>,
+                  key: 'preview',
+                },
+                {
+                  label: '绑定API',
+                  key: 'api',
+                }
+              ],
+            }}
+          >
+            <a>更多</a>
+          </Dropdown>
         </Space>
       );
     },
@@ -142,9 +157,6 @@ export default () => {
       rowKey="menuId"
       search={{
         labelWidth: 'auto',
-      }}
-      pagination={{
-        pageSize: 10,
       }}
       dateFormatter="string"
       headerTitle="菜单管理"
