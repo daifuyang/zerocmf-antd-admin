@@ -1,10 +1,9 @@
-import { outLogin } from '@/services/ant-design-pro.bak/login';
+// import { outLogin } from '@/services/ant-design-pro.bak/login';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import { createStyles } from 'antd-style';
 import { stringify } from 'querystring';
-import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
 import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
@@ -68,13 +67,13 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
   const { loginPath } = initialState
 
   const onMenuClick = useCallback(
-    (event: MenuInfo) => {
+    (event: { key: any; }) => {
       const { key } = event;
       if (key === 'logout') {
         flushSync(() => {
           setInitialState((s) => ({ ...s, currentUser: undefined }));
         });
-        loginOut(loginPath);
+        loginOut(loginPath || '/login');
         return;
       }
       history.push(`/account/${key}`);
@@ -100,7 +99,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
 
   const { currentUser } = initialState;
 
-  if (!currentUser || !currentUser.id) {
+  if (!currentUser || !currentUser.userId) {
     return loading;
   }
 
