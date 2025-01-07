@@ -11,8 +11,35 @@ import React from 'react';
 import { App } from 'antd';
 import { convertToAntdMenu } from '@/utils/menu';
 import { getMenus } from './services/ant-design-pro/menus';
+import _ from 'lodash';
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/login';
+
+/**
+ * 递归查找树形结构中的第一个最深子节点
+ * @param {Array} nodes - 树形结构的节点数组
+ * @param {Object} [startNode] - 可选的起始节点，如果未提供，则从第一个根节点开始
+ * @returns {Object} - 找到的最深子节点
+ */
+function findFirstDeepestNode(nodes: any, startNode = null) {
+  // 如果未提供起始节点，选择第一个根节点
+  let currentNode: any = startNode || _.head(nodes);
+
+  // 如果当前节点不存在，返回 null
+  if (!currentNode) {
+    return null;
+  }
+
+  // 如果当前节点有子节点，递归查找第一个子节点
+  if (_.has(currentNode, 'children') && !_.isEmpty(currentNode.children)) {
+    // 选择第一个子节点
+    const firstChild: any = _.head(currentNode.children);
+    return findFirstDeepestNode(currentNode.children, firstChild);
+  }
+
+  // 当前节点没有子节点，返回当前节点
+  return currentNode;
+}
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
@@ -23,15 +50,18 @@ export async function getInitialState(): Promise<{
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.User | undefined>;
   loginPath?: string;
+  fetchMenus?: () => Promise<any[] | undefined>;
   menus?: any[];
 }> {
   const fetchUserInfo = async () => {
     try {
-      const res = await queryCurrentUser();
-      if (res.code === 0) {
-        throw new Error(res.msg);
+      const res = await queryCurrentUser({
+        skipErrorHandler: true,
+      });
+      if (res.code === 1) {
+        return res.data as API.User;
       }
-      return res.data as API.User;
+
     } catch (error) {
       history.push(loginPath);
     }
@@ -39,29 +69,39 @@ export async function getInitialState(): Promise<{
   };
 
   const fetchMenus = async () => {
-    const res = await getMenus();
-    if (res.code === 1) {
-      return res.data as any[];
+    try {
+      const res = await getMenus({
+        skipErrorHandler: true,
+      });
+      if (res.code === 1) {
+        return res.data as any[];
+      }
+    } catch (error) {
+      return [];
     }
-    return [];
   };
-
-  const menus = await fetchMenus();
 
   // 如果不是登录页面，执行
   const { location } = history;
   if (location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
+    let menus: any = [];
+    if (currentUser) {
+      menus = await fetchMenus();
+    }
     return {
       fetchUserInfo,
+      fetchMenus,
       currentUser,
       settings: defaultSettings as Partial<LayoutSettings>,
       loginPath,
       menus
     };
   }
+
   return {
     fetchUserInfo,
+    fetchMenus,
     settings: defaultSettings as Partial<LayoutSettings>,
     loginPath,
   };
@@ -84,7 +124,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     menu: {
       locale: false,
       params: initialState?.menus,
-      request:  async () => {
+      request: async () => {
         const menus = convertToAntdMenu(initialState?.menus as any);
         return menus;
       },
@@ -96,6 +136,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       if (!initialState?.currentUser && location.pathname !== loginPath) {
         history.push(loginPath);
       }
+
+      // 跳转到菜单第一个菜单
+      if (location.pathname === '/') {
+        const menus = initialState?.menus;
+        if (menus && menus.length > 0) {
+          const node: any = findFirstDeepestNode(menus);
+          history.push(node.path);
+        }
+      }
+
     },
     bgLayoutImgList: [
       {
@@ -119,11 +169,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ],
     links: isDev
       ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-        ]
+        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+          <LinkOutlined />
+          <span>OpenAPI 文档</span>
+        </Link>,
+      ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
