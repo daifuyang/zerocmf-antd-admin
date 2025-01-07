@@ -16,7 +16,7 @@ const valueEnum: any = {
 const columns: ProColumns<Admin>[] = [
   {
     title: 'ID',
-    dataIndex: 'id',
+    dataIndex: 'userId',
     width: 80,
     hideInSearch: true,
   },
@@ -79,7 +79,7 @@ const columns: ProColumns<Admin>[] = [
       enabled: { text: '启用', status: 'Success' },
       disabled: { text: '禁用', status: 'Error' },
     },
-    renderText(text, record, index, action) {
+    renderText(text, record) {
       return record.status === 1 ? <Tag color="success">启用</Tag> : <Tag color="default">禁用</Tag>;
     },
   },
@@ -91,14 +91,14 @@ const columns: ProColumns<Admin>[] = [
       <Space split={<Divider type="vertical" />}>
         <SaveForm
           title="查看用户"
-          initialValues={{ ...record, status: valueEnum[record.status] }}
+          initialValues={record}
           readOnly
         >
           <Typography.Link>查看</Typography.Link>
         </SaveForm>
         <SaveForm
           title="编辑用户"
-          initialValues={{ ...record, status: valueEnum[record.status] }}
+          initialValues={record}
           onOk={() => {
             action?.reload();
           }}
@@ -108,7 +108,7 @@ const columns: ProColumns<Admin>[] = [
         <Popconfirm
           title="您确定删除该用户吗？"
           onConfirm={async () => {
-            const res = await deleteUser({ id: record.id });
+            const res = await deleteUser({ userId: record.userId });
             if (res.code === 1) {
               message.success(res.msg);
               action?.reload();
@@ -156,7 +156,7 @@ const UserList: React.FC = () => {
         pagination={{
           defaultPageSize: 10,
         }}
-        rowKey="id"
+        rowKey="userId"
         toolBarRender={() => [
           <SaveForm
             title="新建用户"

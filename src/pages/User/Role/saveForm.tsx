@@ -1,8 +1,10 @@
 import { addRole, getRole, updateRole } from '@/services/ant-design-pro/roles';
 import { Role } from '@/typings/role';
-import { ModalForm, ProFormDigit, ProFormRadio, ProFormText } from '@ant-design/pro-components';
-import { App, Form } from 'antd';
+import { ModalForm, ProForm, ProFormDigit, ProFormRadio, ProFormText } from '@ant-design/pro-components';
+import { App, Checkbox, Col, Form, Row, Tree } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
+import _ from 'lodash';
+import { getMenus } from '@/services/ant-design-pro/menus';
 
 declare interface Props {
   title: string;
@@ -12,32 +14,79 @@ declare interface Props {
   onOk?: () => void;
 }
 
+// 递归获取所有 id
+const getAllIds = (nodes: any[]): number[] => {
+  return _.flatMap(nodes, (node) => [
+    node.menuId,
+    ...(node.children ? getAllIds(node.children) : [])
+  ]);
+};
+
 const SaveForm = (props: Props) => {
   const [form] = Form.useForm<Role>();
   const { message } = App.useApp();
+  const { title, children, initialValues = { status: 1 }, readOnly = false, onOk } = props;
 
   const [open, setOpen] = useState(false);
-  const { title, children, initialValues={ status : 1}, readOnly = false, onOk } = props;
+  const [menus, setMenus] = useState<any[]>([]);
+
+  const [expandOpen, setExpandOpen] = useState(false); // 展开收起
+  const [checkAllOpen, setCheckAllOpen] = useState(false); // 全选反选
+  const [checkStrictlyOpen, setCheckStrictlyOpen] = useState(false); // 父子联动
+
+  const [defaultKeys, setDefaultKeys] = useState<any[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
+  const [treeCheckedKeys, setTreeCheckedKeys] = useState<any>();
 
   const fetchData = useCallback(
-    async (id: number) => {
+    async (roleId: number) => {
       try {
-        const res = await getRole({ id });
+        const res = await getRole({ roleId });
         if (res.code === 1) {
           form.setFieldsValue(res.data as Role);
+          if (res.data?.menuIds) {
+            setTreeCheckedKeys({ checked: res.data.menuIds });
+          }
         }
       } catch (error) {
         message.error('请求失败');
       }
     },
-    [open, message, form],
+    [message, form],
   );
 
-  useEffect(() => {
-    if (open && initialValues?.id) {
-      fetchData(initialValues.id);
+  // 获取菜单
+  const fetchMenus = useCallback(async () => {
+    try {
+      const res = await getMenus();
+      if (res.code === 1) {
+        setMenus(res.data);
+        const ids = getAllIds(res.data);
+        setDefaultKeys(ids);
+      }
+    } catch (error) {
+      message.error('请求失败');
     }
-  }, [open]);
+
+  }, [message])
+
+  useEffect(() => {
+    if (open) {
+      fetchMenus();
+      const { roleId } = initialValues || {};
+      if (roleId) {
+        fetchData(roleId);
+      }
+    }
+  }, [open, initialValues]);
+
+  const init = () => {
+    setExpandOpen(false);
+    setExpandedKeys([]);
+    setCheckAllOpen(false);
+    setTreeCheckedKeys(undefined);
+    setCheckStrictlyOpen(false);
+  }
 
   return (
     <ModalForm<Role>
@@ -50,19 +99,30 @@ const SaveForm = (props: Props) => {
       width={520}
       initialValues={initialValues}
       modalProps={{
+        centered: true,
         destroyOnClose: true,
-        onCancel: () => {},
+        onCancel: () => {
+          init();
+        },
       }}
       onFinish={async (values) => {
+        const menuIds = treeCheckedKeys?.checked || treeCheckedKeys || [];
+        values.menuIds = menuIds;
+        if (readOnly) {
+          return true;
+        }
+
         let res: any;
-        if (values?.id) {
-          res = await updateRole({ id: values.id }, values);
-        }else {
+        const { roleId } = values || {};
+        if (roleId) {
+          res = await updateRole({ roleId }, values);
+        } else {
           res = await addRole(values);
         }
         if (res.code === 1) {
           if (onOk) {
             onOk();
+            init();
           }
           message.success(res.msg);
           return true;
@@ -71,7 +131,7 @@ const SaveForm = (props: Props) => {
         return false;
       }}
     >
-      <ProFormText name="id" label="id" hidden></ProFormText>
+      <ProFormText name="roleId" label="roleId" hidden></ProFormText>
       <ProFormText
         name="name"
         label="角色名称"
@@ -85,7 +145,7 @@ const SaveForm = (props: Props) => {
         fieldProps={{ readOnly }}
       />
       <ProFormDigit
-        name="sort"
+        name="sortOrder"
         label="排序"
         fieldProps={{ precision: 0, readOnly }}
         placeholder="请输入排序"
@@ -115,6 +175,53 @@ const SaveForm = (props: Props) => {
           ]}
         />
       )}
+
+      <ProForm.Item label="菜单权限">
+
+        <div style={{ marginBottom: 10 }}>
+          <Row>
+            <Col span={8}>
+              <Checkbox onChange={(e) => {
+                const { checked } = e.target;
+                setExpandOpen(checked);
+                setExpandedKeys(checked ? defaultKeys : []);
+              }} checked={expandOpen}>展开/收起</Checkbox>
+            </Col>
+            <Col span={8}>
+              <Checkbox onChange={(e) => {
+                const { checked } = e.target;
+                setCheckAllOpen(checked);
+                setTreeCheckedKeys(checked ? defaultKeys : []);
+              }} checked={checkAllOpen}>全选/取消</Checkbox>
+            </Col>
+            <Col span={8}>
+              <Checkbox onChange={(e) => {
+                const { checked } = e.target;
+                setCheckStrictlyOpen(checked);
+              }} checked={checkStrictlyOpen}>父子联动</Checkbox>
+            </Col>
+          </Row>
+        </div>
+
+        <Tree
+          height={260}
+          checkable
+          checkStrictly={!checkStrictlyOpen}
+          expandedKeys={expandedKeys}
+          checkedKeys={treeCheckedKeys}
+          selectable={false}
+          blockNode
+          fieldNames={{ title: 'menuName', key: 'menuId' }}
+          treeData={menus}
+          onExpand={(expandedKeys) => {
+            setExpandedKeys(expandedKeys);
+          }}
+          onCheck={(checkedKeys) => {
+            setTreeCheckedKeys(checkedKeys);
+          }}
+        />
+      </ProForm.Item>
+
     </ModalForm>
   );
 };

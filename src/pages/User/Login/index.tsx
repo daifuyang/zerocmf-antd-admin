@@ -1,10 +1,12 @@
+import { getMenus } from '@/services/ant-design-pro/menus';
 import { login } from '@/services/ant-design-pro/users';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { history, useIntl, useModel } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import { Alert, Button, Checkbox, Form, Input, message } from 'antd';
 import { createStyles } from 'antd-style';
 import { useState } from 'react';
 import { flushSync } from 'react-dom';
+import { history } from '@umijs/max';
 
 const useStyles = createStyles(({ css }) => {
   return {
@@ -124,6 +126,19 @@ export default function Login() {
     }
   };
 
+  const fetchMenus = async () => {
+    const menus = await initialState?.fetchMenus?.();
+    if (menus) {
+      flushSync(() => {
+        setInitialState((s) => ({
+          ...s,
+          menus,
+        }));
+      });
+      return menus;
+    }
+  }
+
   const handleSubmit = async (values: API.LoginReq) => {
     try {
       // 登录
@@ -134,12 +149,20 @@ export default function Login() {
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
-        message.success(defaultLoginSuccessMessage);
+
         await fetchUserInfo();
-        const urlParams = new URL(window.location.href).searchParams;
-        console.log("push", urlParams.get('redirect') || '/')
-        history.push(urlParams.get('redirect') || '/');
-        return;
+    
+        message.success(defaultLoginSuccessMessage);
+
+        const menus: any = await fetchMenus();
+        console.log('menus', menus);
+        if(menus.length > 0) {
+          history.replace(menus[0].path);
+          return;
+        }
+        
+        message.error("暂无权限");
+        
       }
       // 如果失败去设置用户错误信息
       setUserLoginState(res);

@@ -16,7 +16,7 @@ const valueEnum: any = {
 const columns: ProColumns<Role>[] = [
   {
     title: '角色编号',
-    dataIndex: 'id',
+    dataIndex: 'roleId',
     width: 100,
     hideInSearch: true,
   },
@@ -98,7 +98,7 @@ const columns: ProColumns<Role>[] = [
         <Popconfirm
           title="您确定删除吗？"
           onConfirm={async () => {
-            const res = await deleteRole({ id: record.id });
+            const res = await deleteRole({ roleId: record.roleId });
             if (res.code === 1) {
               message.success(res.msg);
               action?.reload();
@@ -143,7 +143,7 @@ const RoleList: React.FC = () => {
         pagination={{
           defaultPageSize: 10,
         }}
-        rowKey="id"
+        rowKey="roleId"
         toolBarRender={() => [
           <SaveForm
             title="新建角色"
