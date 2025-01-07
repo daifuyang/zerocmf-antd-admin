@@ -1,16 +1,21 @@
 declare namespace API {
   type deleteRoleParams = {
-    id: number;
+    roleId: number;
   };
 
   type deleteUserParams = {
     /** 管理员用户的ID */
+    userId: number;
+  };
+
+  type getMenuParams = {
+    /** 菜单的 ID */
     id: number;
   };
 
   type getRoleParams = {
     /** 角色唯一标识符 */
-    id: number;
+    roleId: number;
   };
 
   type getRolesParams = {
@@ -28,7 +33,7 @@ declare namespace API {
 
   type getUserParams = {
     /** 管理员用户的ID */
-    id: number;
+    userId: number;
   };
 
   type getUsersParams = {
@@ -95,17 +100,17 @@ declare namespace API {
 
   type updateRoleParams = {
     /** 角色唯一标识符 */
-    id: number;
+    roleId: number;
   };
 
   type updateUserParams = {
     /** 管理员用户的ID */
-    id: number;
+    userId: number;
   };
 
   type User = {
     /** 用户ID */
-    id: number;
+    userId: number;
     /** 登录名 */
     loginName: string;
     /** 邮箱地址，可以为空 */

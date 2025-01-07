@@ -29,7 +29,7 @@ export async function addUser(
     /** 昵称 */
     nickname?: string;
     /** 真实姓名 */
-    realName?: string;
+    realname?: string;
     /** 登录密码 */
     password: string;
     /** 性别，1表示男性，0表示女性 */
@@ -61,7 +61,7 @@ export async function getUser(
   params: API.getUserParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { userId: param0, ...queryParams } = params;
   return request<API.Response>(`/api/v1/admin/users/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
@@ -83,7 +83,7 @@ export async function updateUser(
     /** 昵称 */
     nickname?: string;
     /** 真实姓名 */
-    realName?: string;
+    realname?: string;
     /** 登录密码 */
     password: string;
     /** 性别，1表示男性，0表示女性 */
@@ -99,7 +99,7 @@ export async function updateUser(
   },
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { userId: param0, ...queryParams } = params;
   return request<API.Response>(`/api/v1/admin/users/${param0}`, {
     method: 'POST',
     headers: {
@@ -117,7 +117,7 @@ export async function deleteUser(
   params: API.deleteUserParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { userId: param0, ...queryParams } = params;
   return request<API.Response>(`/api/v1/admin/users/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
