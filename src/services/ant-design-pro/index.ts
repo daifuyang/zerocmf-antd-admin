@@ -2,13 +2,19 @@
 /* eslint-disable */
 // API 更新时间：
 // API 唯一标识：
+import * as apis from './apis';
+import * as users from './users';
 import * as menus from './menus';
 import * as roles from './roles';
 import * as admins from './admins';
-import * as users from './users';
+import * as articles from './articles';
+import * as articleCategories from './articleCategories';
 export default {
+  apis,
+  users,
   menus,
   roles,
   admins,
-  users,
+  articles,
+  articleCategories,
 };

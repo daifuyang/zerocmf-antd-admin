@@ -60,7 +60,7 @@ export default [
             name: 'delete',
             path: '/user/admin/delete/:id',
             hideInMenu: true,
-          }
+          },
         ],
       },
       {
@@ -91,8 +91,8 @@ export default [
             name: 'delete',
             path: '/user/role/delete',
             hideInMenu: true,
-          }
-        ]
+          },
+        ],
       },
     ],
   },
@@ -129,8 +129,8 @@ export default [
             name: 'delete',
             path: '/system/menu/delete',
             hideInMenu: true,
-          }
-        ]
+          },
+        ],
       },
       {
         name: 'department',
@@ -160,8 +160,8 @@ export default [
             name: 'delete',
             path: '/system/department/delete',
             hideInMenu: true,
-          }
-        ]
+          },
+        ],
       },
       {
         name: 'post',
@@ -191,8 +191,8 @@ export default [
             name: 'delete',
             path: '/system/post/delete',
             hideInMenu: true,
-          }
-        ]
+          },
+        ],
       },
       {
         name: 'dict',
@@ -222,14 +222,35 @@ export default [
             name: 'delete',
             path: '/system/dict/delete',
             hideInMenu: true,
-          }
-        ]
+          },
+        ],
       },
       {
         name: 'log',
         path: '/system/log',
+      },
+    ],
+  },
+  {
+    path: '/article',
+    name: 'article',
+    icon: 'article',
+    routes: [
+      {
+        path: '/article',
+        redirect: '/article/list',
+      },
+      {
+        name: 'list',
+        path: '/article/list',
+        component: './Article/list',
+      },
+      {
+        name: 'articleCategory',
+        path: '/article/category',
+        component: './Article/category',
       }
-    ]
+    ],
   },
   {
     path: '*',

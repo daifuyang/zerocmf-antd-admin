@@ -23,7 +23,6 @@ interface AntdMenu {
 // 转换树形菜单为 Ant Design Pro 的动态菜单配置
 export function convertToAntdMenu(menuTree: Menu[]): AntdMenu[] {
   return menuTree.map((menu) => {
-    console.log('menu',menu)
     const antdMenu: AntdMenu = {
       name: menu.menuName,
       path: menu.path,

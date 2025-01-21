@@ -43,7 +43,7 @@ export async function getRole(
   });
 }
 
-/** 更新用户角色 更新指定id的用户角色 POST /api/v1/admin/roles/${param0} */
+/** 更新用户角色 更新指定id的用户角色 PUT /api/v1/admin/roles/${param0} */
 export async function updateRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.updateRoleParams,
@@ -52,7 +52,7 @@ export async function updateRole(
 ) {
   const { roleId: param0, ...queryParams } = params;
   return request<API.Response>(`/api/v1/admin/roles/${param0}`, {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },

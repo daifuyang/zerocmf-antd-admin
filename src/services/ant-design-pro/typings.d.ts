@@ -1,4 +1,19 @@
 declare namespace API {
+  type deleteArticleCategoryParams = {
+    /** 文章分类ID */
+    articleCategoryId: number;
+  };
+
+  type deleteArticleParams = {
+    /** 文章ID */
+    articleId: number;
+  };
+
+  type deleteMenuParams = {
+    /** 菜单的 ID */
+    menuId: number;
+  };
+
   type deleteRoleParams = {
     roleId: number;
   };
@@ -8,9 +23,35 @@ declare namespace API {
     userId: number;
   };
 
+  type getArticleCategoryListParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页条数 */
+    pageSize?: number;
+    /** 是否返回树形结构 */
+    isTree?: any;
+  };
+
+  type getArticleCategoryParams = {
+    /** 文章分类ID */
+    articleCategoryId: number;
+  };
+
+  type getArticleListParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页条数 */
+    pageSize?: number;
+  };
+
+  type getArticleParams = {
+    /** 文章ID */
+    articleId: number;
+  };
+
   type getMenuParams = {
     /** 菜单的 ID */
-    id: number;
+    menuId: number;
   };
 
   type getRoleParams = {
@@ -61,11 +102,51 @@ declare namespace API {
 
   type LoginType = 'email' | 'phone' | 'account';
 
+  type MenuRequest = {
+    /** 菜单名称 */
+    menuName?: string;
+    /** 路由地址 */
+    path?: string;
+    /** 菜单图标 */
+    icon?: string;
+    /** 父菜单 ID */
+    parentId?: number;
+    /** 排序 */
+    sortOrder?: number;
+    /** 组件路径 */
+    component?: string;
+    /** 路由参数 */
+    query?: string;
+    /** 是否为外链 （0否 1是） */
+    isFrame?: number;
+    /** 是否缓存（0不缓存 1缓存） */
+    isCache?: number;
+    /** 菜单类型 （0目录 1菜单 2按钮） */
+    menuType?: number;
+    /** 菜单状态（0隐藏 1显示） */
+    visible?: number;
+    /** 菜单状态（0停用 1正常） */
+    status?: number;
+    /** 权限标识 */
+    perms?: string;
+    /** 创建人 ID */
+    createdId?: number;
+    /** 创建人 */
+    createdBy?: string;
+    /** 更新人 ID */
+    updatedId?: number;
+    /** 更新人 */
+    updatedBy?: string;
+    /** 备注 */
+    remark?: string;
+  };
+
   type Response = {
     /** Response code */
     code: number;
     /** Response message */
     msg: string;
+    /** 返回数据 */
     data?: Record<string, any> | Record<string, any>[] | string | number | boolean;
   };
 
@@ -79,8 +160,6 @@ declare namespace API {
     /** 角色状态，1表示启用，0表示禁用 */
     status?: number;
   };
-
-  type securitySchemes = Record<string, any>;
 
   type TokenData = {
     /** JWT 访问令牌 */
@@ -96,6 +175,21 @@ declare namespace API {
   type UnAuthorized = {
     /** Response message */
     msg: string;
+  };
+
+  type updateArticleCategoryParams = {
+    /** 文章分类ID */
+    articleCategoryId: number;
+  };
+
+  type updateArticleParams = {
+    /** 文章ID */
+    articleId: number;
+  };
+
+  type updateMenuParams = {
+    /** 菜单的 ID */
+    menuId: number;
   };
 
   type updateRoleParams = {

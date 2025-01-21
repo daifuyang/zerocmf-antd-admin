@@ -69,7 +69,7 @@ export async function getUser(
   });
 }
 
-/** 编辑管理员用户信息 通过ID编辑管理员用户信息。 POST /api/v1/admin/users/${param0} */
+/** 编辑管理员用户信息 通过ID编辑管理员用户信息。 PUT /api/v1/admin/users/${param0} */
 export async function updateUser(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.updateUserParams,
@@ -101,7 +101,7 @@ export async function updateUser(
 ) {
   const { userId: param0, ...queryParams } = params;
   return request<API.Response>(`/api/v1/admin/users/${param0}`, {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },

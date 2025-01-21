@@ -12,6 +12,7 @@ import { App } from 'antd';
 import { convertToAntdMenu } from '@/utils/menu';
 import { getMenus } from './services/ant-design-pro/menus';
 import _ from 'lodash';
+
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/login';
 
