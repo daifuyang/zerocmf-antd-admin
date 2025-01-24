@@ -249,6 +249,11 @@ export default [
         name: 'articleCategory',
         path: '/article/category',
         component: './Article/category',
+      },
+      {
+        name: 'articleTag',
+        path: '/article/tag',
+        component: './Article/tag',
       }
     ],
   },

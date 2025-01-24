@@ -1,4 +1,3 @@
-import { getMenus } from '@/services/ant-design-pro/menus';
 import { login } from '@/services/ant-design-pro/users';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useIntl, useModel } from '@umijs/max';
@@ -137,7 +136,7 @@ export default function Login() {
       });
       return menus;
     }
-  }
+  };
 
   const handleSubmit = async (values: API.LoginReq) => {
     try {
@@ -148,21 +147,16 @@ export default function Login() {
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
-        });
-
+        }); 
         await fetchUserInfo();
-    
         message.success(defaultLoginSuccessMessage);
-
         const menus: any = await fetchMenus();
-        console.log('menus', menus);
-        if(menus.length > 0) {
+        if (menus.length > 0) {
           history.replace(menus[0].path);
           return;
         }
-        
-        message.error("暂无权限");
-        
+
+        message.error('暂无权限');
       }
       // 如果失败去设置用户错误信息
       setUserLoginState(res);
@@ -193,11 +187,7 @@ export default function Login() {
             className={styles.loginForm}
             name="basic"
           >
-            {code === 0 && type === 'account' && (
-              <LoginMessage
-                content={msg}
-              />
-            )}
+            {code === 0 && type === 'account' && <LoginMessage content={msg} />}
 
             <Form.Item name="account">
               <Input

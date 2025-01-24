@@ -18,6 +18,11 @@ declare namespace API {
     roleId: number;
   };
 
+  type deleteTagParams = {
+    /** 标签 ID */
+    tagId: number;
+  };
+
   type deleteUserParams = {
     /** 管理员用户的ID */
     userId: number;
@@ -47,6 +52,13 @@ declare namespace API {
   type getArticleParams = {
     /** 文章ID */
     articleId: number;
+  };
+
+  type getArticleTagListParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页显示的记录数 */
+    pageSize?: number;
   };
 
   type getMenuParams = {

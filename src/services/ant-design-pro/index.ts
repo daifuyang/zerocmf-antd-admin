@@ -9,6 +9,7 @@ import * as roles from './roles';
 import * as admins from './admins';
 import * as articles from './articles';
 import * as articleCategories from './articleCategories';
+import * as tags from './tags';
 export default {
   apis,
   users,
@@ -17,4 +18,5 @@ export default {
   admins,
   articles,
   articleCategories,
+  tags,
 };

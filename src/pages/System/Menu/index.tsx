@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, Divider, Dropdown, Space, Tag, Tooltip } from 'antd';
 import { useRef } from 'react';
 import SaveForm from './saveForm';
@@ -26,7 +26,7 @@ const columns: ProColumns<MenuItem>[] = [
       showTitle: false,
     },
     render: (menuName) => (
-      <Tooltip placement="topLeft" color='#fff' title={menuName}>
+      <Tooltip placement="topLeft" color="#fff" title={menuName}>
         {menuName}
       </Tooltip>
     ),
@@ -44,7 +44,7 @@ const columns: ProColumns<MenuItem>[] = [
     title: '图标',
     dataIndex: 'icon',
     hideInSearch: true,
-    render: (_, record) => record.icon ? <Tag color="blue">{record.icon}</Tag> : undefined,
+    render: (_, record) => (record.icon ? <Tag color="blue">{record.icon}</Tag> : undefined),
   },
   {
     title: '排序',
@@ -74,12 +74,8 @@ const columns: ProColumns<MenuItem>[] = [
       disabled: { text: '禁用', status: 'Error' },
     },
     render: (_, record) => {
-      return (
-        <Tag color={record.status ? 'green' : 'red'}>
-          {record.status ? '启用' : '禁用'}
-        </Tag>
-      );
-    }
+      return <Tag color={record.status ? 'green' : 'red'}>{record.status ? '启用' : '禁用'}</Tag>;
+    },
   },
   {
     title: '创建时间',
@@ -97,11 +93,9 @@ const columns: ProColumns<MenuItem>[] = [
       return (
         <Space split={<Divider type="vertical" />}>
           <SaveForm title="编辑菜单" key="editable" initialValues={record}>
-            <a>
-              编辑
-            </a>
+            <a>编辑</a>
           </SaveForm>
-          <a style={{ color: '#ff4d4f' }} key="delete" onClick={() => { }}>
+          <a style={{ color: '#ff4d4f' }} key="delete" onClick={() => {}}>
             删除
           </a>
           <Dropdown
@@ -109,17 +103,17 @@ const columns: ProColumns<MenuItem>[] = [
             menu={{
               items: [
                 {
-                  label: <SaveForm title="查看菜单" initialValues={record} readOnly>
-                    <a key="view">
-                      查看
-                    </a>
-                  </SaveForm>,
+                  label: (
+                    <SaveForm title="查看菜单" initialValues={record} readOnly>
+                      <a key="view">查看</a>
+                    </SaveForm>
+                  ),
                   key: 'preview',
                 },
                 {
                   label: '绑定API',
                   key: 'api',
-                }
+                },
               ],
             }}
           >
@@ -134,46 +128,48 @@ const columns: ProColumns<MenuItem>[] = [
 export default () => {
   const actionRef = useRef<ActionType>();
   return (
-    <ProTable<MenuItem>
-      columns={columns}
-      actionRef={actionRef}
-      cardBordered
-      request={async (params, sort, filter) => {
-        // 替换成你自己的API请求
-        const res: any = await getMenus();
-        if (res.code === 1) {
+    <PageContainer>
+      <ProTable<MenuItem>
+        columns={columns}
+        actionRef={actionRef}
+        cardBordered
+        request={async (params, sort, filter) => {
+          // 替换成你自己的API请求
+          const res: any = await getMenus();
+          if (res.code === 1) {
+            return {
+              data: res.data,
+              success: true,
+            };
+          }
           return {
-            data: res.data,
-            success: true,
+            success: false,
           };
-        }
-        return {
-          success: false,
-        };
-      }}
-      editable={{
-        type: 'multiple',
-      }}
-      rowKey="menuId"
-      search={{
-        labelWidth: 'auto',
-      }}
-      dateFormatter="string"
-      headerTitle="菜单管理"
-      toolBarRender={() => [
-        <SaveForm title="新建菜单" key="button">
-          <Button
-            key="button"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              actionRef.current?.reload();
-            }}
-            type="primary"
-          >
-            新建
-          </Button>
-        </SaveForm>,
-      ]}
-    />
+        }}
+        editable={{
+          type: 'multiple',
+        }}
+        rowKey="menuId"
+        search={{
+          labelWidth: 'auto',
+        }}
+        dateFormatter="string"
+        headerTitle="菜单管理"
+        toolBarRender={() => [
+          <SaveForm title="新建菜单" key="button">
+            <Button
+              key="button"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                actionRef.current?.reload();
+              }}
+              type="primary"
+            >
+              新建
+            </Button>
+          </SaveForm>,
+        ]}
+      />
+    </PageContainer>
   );
 };
