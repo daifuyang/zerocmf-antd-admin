@@ -46,6 +46,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.8.3",
     "@ant-design/pro-components": "^2.8.2",
+    "@zerocmf/rich-editor": "0.0.2-alpha.6",
     "antd": "^5.22.7",
     "antd-style": "^3.7.1",
     "classnames": "^2.5.1",

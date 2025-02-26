@@ -153,13 +153,8 @@ export default defineConfig({
       mock: false,
     },
   ],
-  mfsu: {
-    strategy: 'normal',
-  },
+  mfsu: false,
   esbuildMinifyIIFE: true,
   requestRecord: {},
-  qiankun: {
-    master: {},
-  },
   publicPath: "/"
 });

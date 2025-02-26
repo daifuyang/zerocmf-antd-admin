@@ -1,4 +1,23 @@
 declare namespace API {
+  type Api = {
+    /** API ID */
+    id?: number;
+    /** API 路径 */
+    path?: string;
+    /** HTTP 方法 */
+    method?: string;
+    /** API 描述 */
+    description?: string;
+    /** API 分组 */
+    group?: string;
+  };
+
+  type ApiResponse =
+    // #/components/schemas/Response
+    Response & {
+      data?: Api;
+    };
+
   type deleteArticleCategoryParams = {
     /** 文章分类ID */
     articleCategoryId: number;
@@ -7,6 +26,10 @@ declare namespace API {
   type deleteArticleParams = {
     /** 文章ID */
     articleId: number;
+  };
+
+  type deleteMediaParams = {
+    mediaId: number;
   };
 
   type deleteMenuParams = {
@@ -61,9 +84,26 @@ declare namespace API {
     pageSize?: number;
   };
 
+  type getMediaParams = {
+    /** 媒体资源唯一标识符 */
+    mediaId: number;
+  };
+
+  type getMediasParams = {
+    /** 当前页 */
+    current?: number;
+    /** 每页数量 */
+    pageSize?: number;
+  };
+
   type getMenuParams = {
     /** 菜单的 ID */
     menuId: number;
+  };
+
+  type getOptionValueParams = {
+    /** 配置项名称 */
+    name: string;
   };
 
   type getRoleParams = {
@@ -108,11 +148,29 @@ declare namespace API {
     /** 用户的登录密码，使用密码登录时必须提供 */
     password: string;
     loginType?: LoginType;
-    /** 手机登录类型，当使用手机号登录时可以选择 'sms' 短信验证码登录 */
-    phoneType?: 'sms' | 'password';
+    phoneType?: PhoneLoginType;
   };
 
+  type LoginResponse =
+    // #/components/schemas/Response
+    Response & {
+      data?: TokenData;
+    };
+
   type LoginType = 'email' | 'phone' | 'account';
+
+  type Media = {
+    /** 媒体资源ID */
+    mediaId?: number;
+    /** 媒体资源类型 */
+    type?: string;
+    /** 媒体资源URL */
+    url?: string;
+    /** 创建时间戳 */
+    createdAt?: string;
+    /** 更新时间戳 */
+    updatedAt?: string;
+  };
 
   type MenuRequest = {
     /** 菜单名称 */
@@ -153,16 +211,59 @@ declare namespace API {
     remark?: string;
   };
 
+  type optionResponse = {
+    /** 状态码 */
+    code?: number;
+    /** 提示信息 */
+    msg?: string;
+    /** 返回数据 */
+    data?: { optionName?: string; optionValue?: Record<string, any> };
+  };
+
+  type Pagination = {
+    /** 当前页码 */
+    page?: number;
+    /** 每页显示的数据条数 */
+    pageSize?: number;
+    /** 总数据条数 */
+    total?: number;
+  };
+
+  type PhoneLoginType = 'sms' | 'password';
+
   type Response = {
     /** Response code */
     code: number;
     /** Response message */
     msg: string;
     /** 返回数据 */
-    data?: Record<string, any> | Record<string, any>[] | string | number | boolean;
+    data?: Record<string, any>;
   };
 
   type Role = {
+    /** 角色ID */
+    roleId?: number;
+    /** 角色名称 */
+    name?: string;
+    /** 角色描述 */
+    description?: string;
+    /** 排序权重 */
+    sort?: number;
+    /** 状态（例如：1-启用，0-禁用） */
+    status?: number;
+    /** 创建时间 */
+    createdAt?: string;
+    /** 更新时间 */
+    updatedAt?: string;
+  };
+
+  type RoleListResponse =
+    // #/components/schemas/Response
+    Response & {
+      data?: { pagination: Pagination; roles: Role[] } | Role[];
+    };
+
+  type RoleReq = {
     /** 角色名称 */
     name?: string;
     /** 角色描述 */
@@ -171,6 +272,15 @@ declare namespace API {
     sort?: number;
     /** 角色状态，1表示启用，0表示禁用 */
     status?: number;
+  };
+
+  type RoleResponse = {
+    data?: Role;
+  };
+
+  type setOptionValueParams = {
+    /** 配置项名称 */
+    name: number;
   };
 
   type TokenData = {
@@ -197,6 +307,11 @@ declare namespace API {
   type updateArticleParams = {
     /** 文章ID */
     articleId: number;
+  };
+
+  type updateMediaParams = {
+    /** 媒体资源唯一标识符 */
+    mediaId: number;
   };
 
   type updateMenuParams = {
@@ -248,4 +363,10 @@ declare namespace API {
     /** 更新时间 */
     updatedAt: string;
   };
+
+  type UserResponse =
+    // #/components/schemas/Response
+    Response & {
+      data?: User;
+    };
 }

@@ -182,9 +182,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 增加一个 loading 的状态
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
+      console.log('childrenRender');
       return (
         <App>
-          <div id="slave-root">{children}</div>
+          {children}
           {isDev && (
             <SettingDrawer
               disableUrlParams
