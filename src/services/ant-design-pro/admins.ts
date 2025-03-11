@@ -8,7 +8,7 @@ export async function getUsers(
   params: API.getUsersParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.UserResponse>('/api/v1/admin/users', {
+  return request<API.UserResp>('/api/v1/admin/users', {
     method: 'GET',
     params: {
       ...params,
@@ -45,7 +45,7 @@ export async function addUser(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.UserResponse>('/api/v1/admin/users', {
+  return request<API.UserResp>('/api/v1/admin/users', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export async function getUser(
   options?: { [key: string]: any },
 ) {
   const { userId: param0, ...queryParams } = params;
-  return request<API.UserResponse>(`/api/v1/admin/users/${param0}`, {
+  return request<API.UserResp>(`/api/v1/admin/users/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -100,7 +100,7 @@ export async function updateUser(
   options?: { [key: string]: any },
 ) {
   const { userId: param0, ...queryParams } = params;
-  return request<API.UserResponse>(`/api/v1/admin/users/${param0}`, {
+  return request<API.UserResp>(`/api/v1/admin/users/${param0}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ export async function deleteUser(
   options?: { [key: string]: any },
 ) {
   const { userId: param0, ...queryParams } = params;
-  return request<API.UserResponse>(`/api/v1/admin/users/${param0}`, {
+  return request<API.UserResp>(`/api/v1/admin/users/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),

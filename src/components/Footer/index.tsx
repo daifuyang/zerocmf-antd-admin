@@ -5,7 +5,7 @@ import React from 'react';
 const Footer: React.FC = () => {
   return (
     <DefaultFooter
-      copyright={`NextCMS ${new Date().getFullYear()} Created by Daifuyang`}
+      copyright={`ZeroCMF ${new Date().getFullYear()} Created by Daifuyang`}
       style={{
         background: 'none',
       }}

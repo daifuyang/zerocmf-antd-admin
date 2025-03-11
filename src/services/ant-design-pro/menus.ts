@@ -4,15 +4,15 @@ import { request } from '@umijs/max';
 
 /** 获取系统菜单列表 返回系统菜单列表 GET /api/v1/admin/menus */
 export async function getMenus(options?: { [key: string]: any }) {
-  return request<API.Response>('/api/v1/admin/menus', {
+  return request<API.MenuResp>('/api/v1/admin/menus', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
 /** 新增菜单 新增一个系统菜单 POST /api/v1/admin/menus */
-export async function addMenu(body: API.MenuRequest, options?: { [key: string]: any }) {
-  return request<API.Response>('/api/v1/admin/menus', {
+export async function addMenu(body: API.MenuReq, options?: { [key: string]: any }) {
+  return request<API.MenuResp>('/api/v1/admin/menus', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export async function getMenu(
   options?: { [key: string]: any },
 ) {
   const { menuId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/menus/${param0}`, {
+  return request<API.MenuResp>(`/api/v1/admin/menus/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -40,11 +40,11 @@ export async function getMenu(
 export async function updateMenu(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.updateMenuParams,
-  body: API.MenuRequest,
+  body: API.MenuReq,
   options?: { [key: string]: any },
 ) {
   const { menuId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/menus/${param0}`, {
+  return request<API.MenuResp>(`/api/v1/admin/menus/${param0}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export async function deleteMenu(
   options?: { [key: string]: any },
 ) {
   const { menuId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/menus/${param0}`, {
+  return request<API.MenuResp>(`/api/v1/admin/menus/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),

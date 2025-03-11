@@ -4,7 +4,7 @@ import { request } from '@umijs/max';
 
 /** 获取当前用户信息 根据提供的 JWT 令牌获取当前用户信息。 GET /api/v1/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
-  return request<API.UserResponse>('/api/v1/currentUser', {
+  return request<API.UserResp>('/api/v1/currentUser', {
     method: 'GET',
     ...(options || {}),
   });
@@ -12,7 +12,7 @@ export async function currentUser(options?: { [key: string]: any }) {
 
 /** 用户登录 用户可以通过邮箱、手机号或账号进行登录，支持密码登录和短信验证码登录。 POST /api/v1/login */
 export async function login(body: API.LoginReq, options?: { [key: string]: any }) {
-  return request<API.LoginResponse>('/api/v1/login', {
+  return request<API.LoginResp>('/api/v1/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

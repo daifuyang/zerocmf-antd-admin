@@ -8,7 +8,7 @@ export async function getArticleTagList(
   params: API.getArticleTagListParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.Response>('/api/v1/admin/article-tags', {
+  return request<API.TagListResp>('/api/v1/admin/article-tags', {
     method: 'GET',
     params: {
       // current has a default value: 1
@@ -28,7 +28,7 @@ export async function deleteTag(
   options?: { [key: string]: any },
 ) {
   const { tagId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/article-tags/${param0}`, {
+  return request<API.TagResp>(`/api/v1/article-tags/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),

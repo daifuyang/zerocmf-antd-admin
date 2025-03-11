@@ -202,9 +202,20 @@ export default [
         component: './System/Upload',
       },
       {
-        name: 'assets',
-        path: '/system/assets',
-        component: './System/Assets',
+        name: 'media',
+        path: '/system/media',
+        routes: [
+          {
+            path: '/system/media',
+            redirect: '/system/media/list',
+          },
+          {
+            name: 'list',
+            path: '/system/media/list',
+            component: './System/Media',
+            hideInMenu: true,
+          },
+        ]
       },
       {
         name: 'dict',

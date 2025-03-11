@@ -8,7 +8,7 @@ export async function getMedias(
   params: API.getMediasParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.Response>('/api/v1/admin/medias', {
+  return request<API.MediaListResp>('/api/v1/admin/medias', {
     method: 'GET',
     params: {
       ...params,
@@ -22,6 +22,8 @@ export async function addMedia(
   body: {
     /** 文件类型，例如 image 或 video */
     type?: string;
+    /** 媒体资源分类ID */
+    categoryId?: number;
   },
   file?: File,
   options?: { [key: string]: any },
@@ -48,7 +50,7 @@ export async function addMedia(
     }
   });
 
-  return request<API.Response>('/api/v1/admin/medias', {
+  return request<API.MediaResp>('/api/v1/admin/medias', {
     method: 'POST',
     data: formData,
     requestType: 'form',
@@ -63,7 +65,7 @@ export async function getMedia(
   options?: { [key: string]: any },
 ) {
   const { mediaId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/medias/${param0}`, {
+  return request<API.MediaResp>(`/api/v1/admin/medias/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -104,7 +106,7 @@ export async function updateMedia(
     }
   });
 
-  return request<API.Response>(`/api/v1/admin/medias/${param0}`, {
+  return request<API.MediaResp>(`/api/v1/admin/medias/${param0}`, {
     method: 'PUT',
     params: { ...queryParams },
     data: formData,
@@ -120,7 +122,7 @@ export async function deleteMedia(
   options?: { [key: string]: any },
 ) {
   const { mediaId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/medias/${param0}`, {
+  return request<API.MediaResp>(`/api/v1/admin/medias/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),

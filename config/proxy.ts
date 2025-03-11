@@ -19,7 +19,15 @@ export default {
       // 配置了这个可以从 http 代理到 https
       // 依赖 origin 的功能可能需要这个，比如 cookie
       changeOrigin: true,
+      /* headers: {
+        'X-Forwarded-Host': 'localhost:8000',
+        'X-Forwarded-Proto': 'http'
+      }, */
     },
+    '/uploads/': {
+      target: 'http://localhost:3000',
+      changeOrigin: true,
+    }
   },
 
   /**

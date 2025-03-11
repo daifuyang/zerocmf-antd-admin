@@ -9,7 +9,7 @@ export async function getOptionValue(
   options?: { [key: string]: any },
 ) {
   const { name: param0, ...queryParams } = params;
-  return request<API.optionResponse>(`/api/v1/admin/options/${param0}`, {
+  return request<API.optionResp>(`/api/v1/admin/options/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -29,7 +29,7 @@ export async function setOptionValue(
   options?: { [key: string]: any },
 ) {
   const { name: param0, ...queryParams } = params;
-  return request<API.optionResponse>(`/api/v1/admin/options/${param0}`, {
+  return request<API.optionResp>(`/api/v1/admin/options/${param0}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

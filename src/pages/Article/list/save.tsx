@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
 import {
   DrawerForm,
   ProForm,
@@ -7,18 +7,17 @@ import {
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
-  ProFormTreeSelect
-} from "@ant-design/pro-components";
-import { Button, Form, TreeSelect, message } from "antd";
-import dayjs from "dayjs";
+  ProFormTreeSelect,
+} from '@ant-design/pro-components';
+import { Button, Form, TreeSelect, message } from 'antd';
+import dayjs from 'dayjs';
 
-import { createArticle, getArticle, updateArticle } from "@/services/ant-design-pro/articles";
+import { createArticle, getArticle, updateArticle } from '@/services/ant-design-pro/articles';
 import { getArticleCategoryList } from '@/services/ant-design-pro/articleCategories';
 
-import Editor from "@zerocmf/rich-editor";
-import Upload from "@/components/Upload";
+import Editor from '@zerocmf/rich-editor';
 
-
+import MediaPicker, { ImagePicker } from '@/pages/System/Media/components/MediaPicker';
 
 interface Props {
   title?: string;
@@ -34,12 +33,11 @@ interface ModalFormProps {
 const { SHOW_ALL } = TreeSelect;
 
 export default function Save(props: Props) {
-  const { title = "新增文章", children, initialValues, onFinish } = props;
+  const { title = '新增文章', children, initialValues, onFinish } = props;
   const [form] = Form.useForm<ModalFormProps>();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-
     const articleId = initialValues?.articleId;
 
     if (articleId && open) {
@@ -55,7 +53,7 @@ export default function Save(props: Props) {
                 label: item.categoryName,
               };
             }),
-            publishedAt: dayjs.unix(res.data.publishedAt)
+            publishedAt: dayjs.unix(res.data.publishedAt),
           });
         }
       };
@@ -66,7 +64,7 @@ export default function Save(props: Props) {
   return (
     <DrawerForm<ModalFormProps>
       title={title}
-      width={"80%"}
+      width={'80%'}
       open={open}
       trigger={
         children || (
@@ -81,17 +79,17 @@ export default function Save(props: Props) {
       }}
       autoFocusFirstInput
       drawerProps={{
-        destroyOnClose: true
+        destroyOnClose: true,
       }}
       initialValues={initialValues}
       onFinish={async (values: any) => {
         const { articleId, categoryIds, publishedAt = undefined } = values;
 
-        if (values["categoryIds"]?.length > 0) {
-          values["categoryIds"] = categoryIds.map((item: any) => item.value);
+        if (values['categoryIds']?.length > 0) {
+          values['categoryIds'] = categoryIds.map((item: any) => item.value);
         }
 
-        values["publishedAt"] = dayjs(publishedAt).unix();
+        values['publishedAt'] = dayjs(publishedAt).unix();
         let res: any = null;
         if (articleId > 0) {
           res = await updateArticle({ articleId }, values);
@@ -119,9 +117,9 @@ export default function Save(props: Props) {
           treeCheckable: true,
           showCheckedStrategy: SHOW_ALL,
           fieldNames: {
-            value: "articleCategoryId",
-            label: "name"
-          }
+            value: 'articleCategoryId',
+            label: 'name',
+          },
         }}
         label="分类"
         name="categoryIds"
@@ -133,27 +131,27 @@ export default function Save(props: Props) {
           }
           return res.data;
         }}
-        rules={[{ required: true, message: "请选择父级分类" }]}
+        rules={[{ required: true, message: '请选择父级分类' }]}
       />
       <ProFormText
         label="标题"
         name="title"
-        rules={[{ required: true, message: "标题不能为空" }]}
+        rules={[{ required: true, message: '标题不能为空' }]}
       />
       <ProFormSelect mode="tags" label="标签" name="keywords" />
       <ProFormDateTimePicker
         fieldProps={{
-          style: { width: 288 }
+          style: { width: 288 },
         }}
         label="发布日期"
         name="publishedAt"
       />
       <ProForm.Item label="封面" name="thumbnail">
-        <Upload type="image" />
+        <ImagePicker />
       </ProForm.Item>
       <ProFormText
         fieldProps={{
-          style: { width: 288 }
+          style: { width: 288 },
         }}
         label="作者"
         name="author"
@@ -161,7 +159,7 @@ export default function Save(props: Props) {
       <ProFormTextArea label="摘要" name="excerpt" />
 
       <ProForm.Item label="详情" name="content">
-        <Editor />
+        <Editor imagePickerRender={(props) => <MediaPicker {...props} />} />
       </ProForm.Item>
 
       <ProFormText label="自定义url" name="alias" />

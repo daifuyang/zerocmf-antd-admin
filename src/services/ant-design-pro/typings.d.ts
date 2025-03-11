@@ -12,11 +12,159 @@ declare namespace API {
     group?: string;
   };
 
-  type ApiResponse =
+  type ApiResp =
     // #/components/schemas/Response
     Response & {
       data?: Api;
     };
+
+  type Article = {
+    /** 文章ID */
+    articleId?: number;
+    /** 发布格式 */
+    postFormat?: number;
+    /** SEO标题 */
+    seoTitle?: string;
+    /** SEO关键词 */
+    seoKeywords?: string;
+    /** SEO描述 */
+    seoDescription?: string;
+    /** 缩略图URL */
+    thumbnail?: string;
+    /** 文章标题 */
+    title?: string;
+    /** 文章内容，支持HTML格式 */
+    content?: string;
+    /** 关键词列表 */
+    keywords?: string[];
+    /** 摘要 */
+    excerpt?: string;
+    /** 来源 */
+    source?: string;
+    /** 是否置顶 */
+    isTop?: boolean;
+    /** 点击量 */
+    hits?: number;
+    /** 收藏数 */
+    favorites?: number;
+    /** 点赞数 */
+    likes?: number;
+    /** 评论数 */
+    comments?: number;
+    /** 其他信息 */
+    more?: Record<string, any>;
+    /** 文章状态（例如：1-已发布，0-草稿） */
+    articleStatus?: number;
+    /** 评论状态（例如：1-允许，0-不允许） */
+    commentStatus?: number;
+    /** 排序权重 */
+    order?: number;
+    /** 发布时间，Unix时间戳格式 */
+    publishedAt?: number;
+    /** 创建者ID */
+    createId?: number;
+    /** 创建者名称 */
+    creator?: string;
+    /** 更新者ID */
+    updateId?: number;
+    /** 更新者名称 */
+    updater?: string;
+    /** 创建时间，Unix时间戳格式 */
+    createdAt?: number;
+    /** 更新时间，Unix时间戳格式 */
+    updatedAt?: number;
+    /** 删除时间，Unix时间戳格式，0表示未删除 */
+    deletedAt?: number;
+    /** 创建时间的可读格式 */
+    createdTime?: string;
+    /** 更新时间的可读格式 */
+    updatedTime?: string;
+    /** 发布时间的可读格式 */
+    publishedTime?: string;
+    /** 分类信息 */
+    category?: { categoryId?: number; categoryName?: string }[];
+  };
+
+  type ArticleCategory = {
+    /** 分类ID */
+    articleCategoryId?: number;
+    /** 父级分类ID，0表示顶级分类 */
+    parentId?: number;
+    /** SEO标题 */
+    seoTitle?: string;
+    /** SEO关键词 */
+    seoKeywords?: string;
+    /** SEO描述 */
+    seoDescription?: string;
+    /** 分类名称 */
+    name?: string;
+    /** 分类图标 */
+    icon?: string;
+    /** 分类描述 */
+    description?: string;
+    /** 分类状态（例如：1-启用，0-禁用） */
+    status?: number;
+    /** 该分类下的文章数量 */
+    articleCount?: number;
+    /** 分类路径，用于标识层级关系 */
+    path?: string;
+    /** 排序权重 */
+    order?: number;
+    /** 创建者ID */
+    createId?: number;
+    /** 创建者名称 */
+    creator?: string;
+    /** 更新者ID */
+    updateId?: number;
+    /** 更新者名称 */
+    updater?: string;
+    /** 创建时间，Unix时间戳格式 */
+    createdAt?: number;
+    /** 更新时间，Unix时间戳格式 */
+    updatedAt?: number;
+    /** 删除时间，Unix时间戳格式，0表示未删除 */
+    deletedAt?: number;
+  };
+
+  type ArticleCategoryListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?:
+        | { pagination: Pagination; data?: Article[] }
+        | ArticleCategory[]
+        | ArticleCategoryTree[];
+    };
+
+  type ArticleCategoryResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: ArticleCategory;
+    };
+
+  type ArticleCategoryTree = {
+    articleCategory?: ArticleCategory;
+    /** 子文章列表 */
+    children?: ArticleCategory[];
+  };
+
+  type ArticleListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: { pagination: Pagination; data?: Article[] } | Article[];
+    };
+
+  type ArticleResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: Article;
+    };
+
+  type ArticleTag = {
+    /** 标签ID */
+    tagId?: number;
+    /** 标签名称 */
+    name?: string;
+  };
 
   type deleteArticleCategoryParams = {
     /** 文章分类ID */
@@ -26,6 +174,11 @@ declare namespace API {
   type deleteArticleParams = {
     /** 文章ID */
     articleId: number;
+  };
+
+  type deleteMediaCategoryParams = {
+    /** 媒体分类ID */
+    categoryId: number;
   };
 
   type deleteMediaParams = {
@@ -82,6 +235,23 @@ declare namespace API {
     current?: number;
     /** 每页显示的记录数 */
     pageSize?: number;
+  };
+
+  type getMediaCategoryListParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页条数 */
+    pageSize?: number;
+  };
+
+  type getMediaCategoryParams = {
+    /** 媒体分类ID */
+    categoryId: number;
+  };
+
+  type getMediaCategoryTreeParams = {
+    /** 父级分类ID，默认为0表示获取顶级分类 */
+    parentId?: number;
   };
 
   type getMediaParams = {
@@ -151,7 +321,7 @@ declare namespace API {
     phoneType?: PhoneLoginType;
   };
 
-  type LoginResponse =
+  type LoginResp =
     // #/components/schemas/Response
     Response & {
       data?: TokenData;
@@ -172,7 +342,101 @@ declare namespace API {
     updatedAt?: string;
   };
 
-  type MenuRequest = {
+  type MediaCategory = {
+    /** 分类ID */
+    categoryId?: number;
+    /** 父级分类ID，0表示顶级分类 */
+    parentId?: number;
+    /** 分类名称 */
+    name?: string;
+    /** 分类状态（例如：1-启用，0-禁用） */
+    status?: number;
+    /** 创建时间，Unix时间戳格式 */
+    createdAt?: number;
+    /** 更新时间，Unix时间戳格式 */
+    updatedAt?: number;
+    /** 删除时间，Unix时间戳格式，0表示未删除 */
+    deletedAt?: number;
+    /** 子分类列表，仅在树形结构返回时有效 */
+    children?: MediaCategory[];
+  };
+
+  type MediaCategoryListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: (Pagination & { data?: MediaCategory[] }) | MediaCategory[];
+    };
+
+  type MediaCategoryResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: MediaCategory;
+    };
+
+  type MediaListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: (Pagination & { medias?: Media[] }) | Media[];
+    };
+
+  type MediaResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: MediaListResp;
+    };
+
+  type Menu = {
+    /** 菜单ID */
+    menuId?: number;
+    /** 菜单名称 */
+    menuName?: string;
+    /** 路由路径 */
+    path?: string;
+    /** 菜单图标 */
+    icon?: string;
+    /** 父级菜单ID，0表示顶级菜单 */
+    parentId?: number;
+    /** 排序权重 */
+    sortOrder?: number;
+    /** 组件路径或名称 */
+    component?: string;
+    /** 查询参数 */
+    query?: string;
+    /** 是否为外部链接（例如：0-否，1-是） */
+    isFrame?: number;
+    /** 是否缓存页面（例如：0-否，1-是） */
+    isCache?: number;
+    /** 菜单类型（例如：1-目录，2-菜单，3-按钮） */
+    menuType?: number;
+    /** 是否可见（例如：0-隐藏，1-显示） */
+    visible?: number;
+    /** 状态（例如：0-禁用，1-启用） */
+    status?: number;
+    /** 权限标识 */
+    perms?: string;
+    /** 创建者ID */
+    createdId?: number;
+    /** 创建者名称 */
+    createdBy?: string;
+    /** 创建时间，Unix时间戳格式 */
+    createdAt?: number;
+    /** 更新者ID */
+    updatedId?: number;
+    /** 更新者名称 */
+    updatedBy?: string;
+    /** 更新时间，Unix时间戳格式 */
+    updatedAt?: number;
+    /** 备注信息 */
+    remark?: string;
+  };
+
+  type MenuListResp =
+    // #/components/schemas/MenuResp
+    MenuResp & {
+      data?: { pagination: Pagination; roles: Menu[] } | Menu[];
+    };
+
+  type MenuReq = {
     /** 菜单名称 */
     menuName?: string;
     /** 路由地址 */
@@ -211,7 +475,7 @@ declare namespace API {
     remark?: string;
   };
 
-  type optionResponse = {
+  type optionResp = {
     /** 状态码 */
     code?: number;
     /** 提示信息 */
@@ -236,8 +500,6 @@ declare namespace API {
     code: number;
     /** Response message */
     msg: string;
-    /** 返回数据 */
-    data?: Record<string, any>;
   };
 
   type Role = {
@@ -257,10 +519,10 @@ declare namespace API {
     updatedAt?: string;
   };
 
-  type RoleListResponse =
+  type RoleListResp =
     // #/components/schemas/Response
     Response & {
-      data?: { pagination: Pagination; roles: Role[] } | Role[];
+      data?: { pagination: Pagination; data?: Role[] } | Role[];
     };
 
   type RoleReq = {
@@ -274,7 +536,7 @@ declare namespace API {
     status?: number;
   };
 
-  type RoleResponse = {
+  type RoleResp = {
     data?: Role;
   };
 
@@ -282,6 +544,18 @@ declare namespace API {
     /** 配置项名称 */
     name: number;
   };
+
+  type TagListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: { pagination: Pagination; data?: ArticleTag[] } | ArticleTag[];
+    };
+
+  type TagResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: ArticleTag;
+    };
 
   type TokenData = {
     /** JWT 访问令牌 */
@@ -307,6 +581,11 @@ declare namespace API {
   type updateArticleParams = {
     /** 文章ID */
     articleId: number;
+  };
+
+  type updateMediaCategoryParams = {
+    /** 媒体分类ID */
+    categoryId: number;
   };
 
   type updateMediaParams = {
@@ -364,7 +643,7 @@ declare namespace API {
     updatedAt: string;
   };
 
-  type UserResponse =
+  type UserResp =
     // #/components/schemas/Response
     Response & {
       data?: User;

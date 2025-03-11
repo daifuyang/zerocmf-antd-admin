@@ -1,4 +1,4 @@
-@import "@zerocmf/rich-editor/es/index.css";
+@import '@zerocmf/rich-editor/es/index.css';
 
 html,
 body,
@@ -77,6 +77,54 @@ ol {
   cursor: pointer;
   &:hover {
     color: #ffa6a7;
-    transition:  color 0.3s;
+    transition: color 0.3s;
   }
+}
+
+.full-layout {
+  width: 100%;
+  height: 100%;
+}
+
+.full-layout .ant-app {
+  height: 100%;
+}
+
+.full-layout .ant-pro-page-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.full-layout .ant-pro-page-container > .ant-pro-grid-content {
+  flex: 1;
+}
+
+.full-layout .ant-pro-grid-content-children {
+  height: 100%;
+}
+
+.full-layout .ant-pro-layout-watermark-wrapper {
+  height: 100%;
+}
+
+.full-layout .ant-pro-page-container-children-container {
+  height: 100%;
+}
+
+.full-layout .ant-pro-page-container-children-container > .ant-card {
+  height: 100%;
+}
+
+.full-layout .ant-pro-page-container-children-container .ant-card,
+.full-layout .ant-pro-page-container-children-container .ant-card-body,
+.full-layout .ant-pro-page-container-children-container .ant-spin-nested-loading,
+.full-layout .ant-pro-page-container-children-container .ant-spin-container,
+.full-layout .ant-pro-page-container-children-container .media-container {
+  height: 100%;
+}
+
+.full-layout .ant-pro-page-container-children-container .ant-spin-container {
+  line-height: 0;
+  font-size: 0;
 }

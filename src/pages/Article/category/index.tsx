@@ -9,7 +9,6 @@ import {
   deleteArticleCategory,
 } from '@/services/ant-design-pro/articleCategories';
 import { PlusOutlined } from '@ant-design/icons';
-import _ from 'lodash';
 
 const { Text } = Typography;
 

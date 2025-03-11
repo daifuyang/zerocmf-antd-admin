@@ -8,7 +8,7 @@ export async function getArticleCategoryList(
   params: API.getArticleCategoryListParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.Response>('/api/v1/admin/article-categories', {
+  return request<API.ArticleCategoryListResp>('/api/v1/admin/article-categories', {
     method: 'GET',
     params: {
       // current has a default value: 1
@@ -39,7 +39,7 @@ export async function addArticleCategory(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.Response>('/api/v1/admin/article-categories', {
+  return request<API.ArticleCategoryResp>('/api/v1/admin/article-categories', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export async function getArticleCategory(
   options?: { [key: string]: any },
 ) {
   const { articleCategoryId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/article-categories/${param0}`, {
+  return request<API.ArticleCategoryResp>(`/api/v1/admin/article-categories/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -84,7 +84,7 @@ export async function updateArticleCategory(
   options?: { [key: string]: any },
 ) {
   const { articleCategoryId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/article-categories/${param0}`, {
+  return request<API.ArticleCategoryResp>(`/api/v1/admin/article-categories/${param0}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export async function deleteArticleCategory(
   options?: { [key: string]: any },
 ) {
   const { articleCategoryId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/article-categories/${param0}`, {
+  return request<API.ArticleCategoryResp>(`/api/v1/admin/article-categories/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),

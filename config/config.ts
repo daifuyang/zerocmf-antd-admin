@@ -153,7 +153,9 @@ export default defineConfig({
       mock: false,
     },
   ],
-  mfsu: false,
+  mfsu: {
+    strategy: 'normal',
+  },
   esbuildMinifyIIFE: true,
   requestRecord: {},
   publicPath: "/"

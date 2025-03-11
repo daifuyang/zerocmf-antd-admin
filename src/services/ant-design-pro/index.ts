@@ -5,6 +5,7 @@
 import * as apis from './apis';
 import * as users from './users';
 import * as medias from './medias';
+import * as mediaCategories from './mediaCategories';
 import * as menus from './menus';
 import * as options from './options';
 import * as roles from './roles';
@@ -16,6 +17,7 @@ export default {
   apis,
   users,
   medias,
+  mediaCategories,
   menus,
   options,
   roles,

@@ -49,6 +49,7 @@ export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.User;
   loading?: boolean;
+  fullLayout?: boolean;
   fetchUserInfo?: () => Promise<API.User | undefined>;
   loginPath?: string;
   fetchMenus?: () => Promise<any[] | undefined>;
@@ -96,7 +97,8 @@ export async function getInitialState(): Promise<{
       currentUser,
       settings: defaultSettings as Partial<LayoutSettings>,
       loginPath,
-      menus
+      menus,
+      fullLayout: false
     };
   }
 
@@ -105,12 +107,14 @@ export async function getInitialState(): Promise<{
     fetchMenus,
     settings: defaultSettings as Partial<LayoutSettings>,
     loginPath,
+    fullLayout: false
   };
 }
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
+    className: initialState?.fullLayout ? 'full-layout' : '',
     actionsRender: () => [<Question key="doc" />, <SelectLang key="SelectLang" />],
     avatarProps: {
       src: initialState?.currentUser?.avatar || '/assets/images/avatar.png',
@@ -182,7 +186,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 增加一个 loading 的状态
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
-      console.log('childrenRender');
       return (
         <App>
           {children}

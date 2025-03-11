@@ -8,7 +8,7 @@ export async function getRoles(
   params: API.getRolesParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.RoleListResponse>('/api/v1/admin/roles', {
+  return request<API.RoleListResp>('/api/v1/admin/roles', {
     method: 'GET',
     params: {
       ...params,
@@ -19,7 +19,7 @@ export async function getRoles(
 
 /** 创建用户角色 创建一个新的用户角色。 POST /api/v1/admin/roles */
 export async function addRole(body: API.RoleReq, options?: { [key: string]: any }) {
-  return request<API.RoleResponse>('/api/v1/admin/roles', {
+  return request<API.RoleResp>('/api/v1/admin/roles', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export async function getRole(
   options?: { [key: string]: any },
 ) {
   const { roleId: param0, ...queryParams } = params;
-  return request<API.RoleResponse>(`/api/v1/admin/roles/${param0}`, {
+  return request<API.RoleResp>(`/api/v1/admin/roles/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -51,7 +51,7 @@ export async function updateRole(
   options?: { [key: string]: any },
 ) {
   const { roleId: param0, ...queryParams } = params;
-  return request<API.RoleResponse>(`/api/v1/admin/roles/${param0}`, {
+  return request<API.RoleResp>(`/api/v1/admin/roles/${param0}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export async function deleteRole(
   options?: { [key: string]: any },
 ) {
   const { roleId: param0, ...queryParams } = params;
-  return request<API.RoleResponse>(`/api/v1/admin/roles/${param0}`, {
+  return request<API.RoleResp>(`/api/v1/admin/roles/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),

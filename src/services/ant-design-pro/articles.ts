@@ -8,7 +8,7 @@ export async function getArticleList(
   params: API.getArticleListParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.Response>('/api/v1/admin/articles', {
+  return request<API.ArticleListResp>('/api/v1/admin/articles', {
     method: 'GET',
     params: {
       // current has a default value: 1
@@ -39,7 +39,7 @@ export async function createArticle(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.Response>('/api/v1/admin/articles', {
+  return request<API.ArticleResp>('/api/v1/admin/articles', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export async function getArticle(
   options?: { [key: string]: any },
 ) {
   const { articleId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/articles/${param0}`, {
+  return request<API.ArticleResp>(`/api/v1/admin/articles/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -84,7 +84,7 @@ export async function updateArticle(
   options?: { [key: string]: any },
 ) {
   const { articleId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/articles/${param0}`, {
+  return request<API.ArticleResp>(`/api/v1/admin/articles/${param0}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export async function deleteArticle(
   options?: { [key: string]: any },
 ) {
   const { articleId: param0, ...queryParams } = params;
-  return request<API.Response>(`/api/v1/admin/articles/${param0}`, {
+  return request<API.ArticleResp>(`/api/v1/admin/articles/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),
