@@ -176,6 +176,11 @@ declare namespace API {
     articleId: number;
   };
 
+  type deleteDeptParams = {
+    /** 部门唯一标识符 */
+    deptId: number;
+  };
+
   type deleteMediaCategoryParams = {
     /** 媒体分类ID */
     categoryId: number;
@@ -203,6 +208,95 @@ declare namespace API {
     /** 管理员用户的ID */
     userId: number;
   };
+
+  type DeptInfo = {
+    /** 部门ID */
+    deptId?: number;
+    /** 部门名称 */
+    deptName?: string;
+    /** 父部门ID */
+    parentId?: number;
+    /** 排序序号 */
+    sortOrder?: number;
+    /** 部门负责人 */
+    leader?: string;
+    /** 联系电话 */
+    phone?: string;
+    /** 邮箱 */
+    email?: string;
+    /** 部门状态，0表示禁用，1表示启用 */
+    status?: number;
+    /** 创建人ID */
+    createdId?: number;
+    /** 创建人 */
+    createdBy?: string;
+    /** 创建时间 */
+    createdAt?: string;
+    /** 更新时间 */
+    updatedAt?: string;
+    /** 删除时间，0表示未删除 */
+    deletedAt?: string;
+  };
+
+  type DeptListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: DeptInfo[];
+    };
+
+  type DeptReq = {
+    /** 部门名称 */
+    deptName: string;
+    /** 父部门ID，0表示顶级部门 */
+    parentId?: number;
+    /** 排序序号 */
+    sortOrder?: number;
+    /** 部门负责人 */
+    leader?: string;
+    /** 联系电话 */
+    phone?: string;
+    /** 邮箱 */
+    email?: string;
+    /** 部门状态，0表示禁用，1表示启用 */
+    status?: 0 | 1;
+  };
+
+  type DeptResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: DeptInfo;
+    };
+
+  type DeptTreeInfo = {
+    /** 部门ID */
+    deptId?: number;
+    /** 部门名称 */
+    deptName?: string;
+    /** 父部门ID */
+    parentId?: number;
+    /** 排序序号 */
+    sortOrder?: number;
+    /** 部门负责人 */
+    leader?: string;
+    /** 联系电话 */
+    phone?: string;
+    /** 邮箱 */
+    email?: string;
+    /** 部门状态，0表示禁用，1表示启用 */
+    status?: number;
+    /** 创建时间 */
+    createdAt?: string;
+    /** 更新时间 */
+    updatedAt?: string;
+    /** 子部门列表 */
+    children?: DeptTreeInfo[];
+  };
+
+  type DeptTreeResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: DeptTreeInfo[];
+    };
 
   type getArticleCategoryListParams = {
     /** 当前页码 */
@@ -235,6 +329,11 @@ declare namespace API {
     current?: number;
     /** 每页显示的记录数 */
     pageSize?: number;
+  };
+
+  type getDeptParams = {
+    /** 部门唯一标识符 */
+    deptId: number;
   };
 
   type getMediaCategoryListParams = {
@@ -581,6 +680,11 @@ declare namespace API {
   type updateArticleParams = {
     /** 文章ID */
     articleId: number;
+  };
+
+  type updateDeptParams = {
+    /** 部门唯一标识符 */
+    deptId: number;
   };
 
   type updateMediaCategoryParams = {

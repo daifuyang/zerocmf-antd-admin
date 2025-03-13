@@ -4,6 +4,7 @@
 // API 唯一标识：
 import * as apis from './apis';
 import * as users from './users';
+import * as depts from './depts';
 import * as medias from './medias';
 import * as mediaCategories from './mediaCategories';
 import * as menus from './menus';
@@ -16,6 +17,7 @@ import * as tags from './tags';
 export default {
   apis,
   users,
+  depts,
   medias,
   mediaCategories,
   menus,

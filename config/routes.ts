@@ -135,32 +135,32 @@ export default [
         ],
       },
       {
-        name: 'department',
-        path: '/system/department',
+        name: 'dept',
+        path: '/system/dept',
         routes: [
           {
-            path: '/system/department',
-            redirect: '/system/department/list',
+            path: '/system/dept',
+            redirect: '/system/dept/list',
           },
           {
             name: 'list',
-            path: '/system/department/list',
-            component: './System/Department',
+            path: '/system/dept/list',
+            component: './System/Dept',
             hideInMenu: true,
           },
           {
             name: 'add',
-            path: '/system/department/add',
+            path: '/system/dept/add',
             hideInMenu: true,
           },
           {
             name: 'edit',
-            path: '/system/department/edit',
+            path: '/system/dept/edit',
             hideInMenu: true,
           },
           {
             name: 'delete',
-            path: '/system/department/delete',
+            path: '/system/dept/delete',
             hideInMenu: true,
           },
         ],
