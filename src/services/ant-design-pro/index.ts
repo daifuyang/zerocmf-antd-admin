@@ -5,10 +5,14 @@
 import * as apis from './apis';
 import * as users from './users';
 import * as depts from './depts';
+import * as dicts from './dicts';
+import * as dictsData from './dictsData';
+import * as loginLogs from './loginLogs';
 import * as medias from './medias';
 import * as mediaCategories from './mediaCategories';
 import * as menus from './menus';
 import * as options from './options';
+import * as posts from './posts';
 import * as roles from './roles';
 import * as admins from './admins';
 import * as articles from './articles';
@@ -18,10 +22,14 @@ export default {
   apis,
   users,
   depts,
+  dicts,
+  dictsData,
+  loginLogs,
   medias,
   mediaCategories,
   menus,
   options,
+  posts,
   roles,
   admins,
   articles,

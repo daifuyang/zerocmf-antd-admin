@@ -1,4 +1,4 @@
-﻿import component from "@/locales/bn-BD/component";
+﻿import component from '@/locales/bn-BD/component';
 
 /**
  * @name umi 的路由配置
@@ -215,7 +215,7 @@ export default [
             component: './System/Media',
             hideInMenu: true,
           },
-        ]
+        ],
       },
       {
         name: 'dict',
@@ -232,18 +232,9 @@ export default [
             hideInMenu: true,
           },
           {
-            name: 'add',
-            path: '/system/dict/add',
-            hideInMenu: true,
-          },
-          {
-            name: 'edit',
-            path: '/system/dict/edit',
-            hideInMenu: true,
-          },
-          {
-            name: 'delete',
-            path: '/system/dict/delete',
+            name: 'dict-data',
+            path: '/system/dict/data/:dictId',
+            component: './System/Dict/DictData',
             hideInMenu: true,
           },
         ],
@@ -251,6 +242,22 @@ export default [
       {
         name: 'log',
         path: '/system/log',
+        routes: [
+          {
+            path: '/system/log',
+            redirect: '/system/log/login/list',
+          },
+          {
+            path: '/system/log/login',
+            redirect: '/system/log/login/list',
+          },
+          {
+            name: 'login',
+            path: '/system/log/login/list',
+            component: './System/Log/Login',
+            hideInMenu: true,
+          },
+        ],
       },
     ],
   },
@@ -277,7 +284,7 @@ export default [
         name: 'articleTag',
         path: '/article/tag',
         component: './Article/tag',
-      }
+      },
     ],
   },
   {

@@ -3,9 +3,16 @@
 import { request } from '@umijs/max';
 
 /** 获取部门列表 返回所有部门的列表数据。 GET /api/v1/admin/depts */
-export async function getDeptList(options?: { [key: string]: any }) {
+export async function getDeptList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getDeptListParams,
+  options?: { [key: string]: any },
+) {
   return request<API.DeptListResp>('/api/v1/admin/depts', {
     method: 'GET',
+    params: {
+      ...params,
+    },
     ...(options || {}),
   });
 }
@@ -70,9 +77,16 @@ export async function deleteDept(
 }
 
 /** 获取部门树结构 返回部门的树形结构数据。 GET /api/v1/admin/depts/tree */
-export async function getDeptTree(options?: { [key: string]: any }) {
+export async function getDeptTree(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getDeptTreeParams,
+  options?: { [key: string]: any },
+) {
   return request<API.DeptTreeResp>('/api/v1/admin/depts/tree', {
     method: 'GET',
+    params: {
+      ...params,
+    },
     ...(options || {}),
   });
 }

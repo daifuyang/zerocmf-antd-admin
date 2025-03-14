@@ -181,6 +181,14 @@ declare namespace API {
     deptId: number;
   };
 
+  type deleteDictDataParams = {
+    dictCode: number;
+  };
+
+  type deleteDictTypeParams = {
+    dictId: number;
+  };
+
   type deleteMediaCategoryParams = {
     /** 媒体分类ID */
     categoryId: number;
@@ -193,6 +201,11 @@ declare namespace API {
   type deleteMenuParams = {
     /** 菜单的 ID */
     menuId: number;
+  };
+
+  type deletePostParams = {
+    /** 岗位唯一标识符 */
+    postId: number;
   };
 
   type deleteRoleParams = {
@@ -298,6 +311,102 @@ declare namespace API {
       data?: DeptTreeInfo[];
     };
 
+  type DictData = {
+    dictCode?: number;
+    dictLabel?: string;
+    dictValue?: string;
+    dictType?: string;
+    dictSort?: number;
+    cssClass?: string;
+    listClass?: string;
+    isDefault?: string;
+    status?: string;
+    remark?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type DictDataCreate = {
+    dictSort: number;
+    dictLabel: string;
+    dictValue: string;
+    dictType: string;
+    cssClass?: string;
+    listClass?: string;
+    isDefault?: string;
+    status?: string;
+    remark?: string;
+  };
+
+  type DictDataListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: Pagination & { data?: DictData[] };
+    };
+
+  type DictDataResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: DictData;
+    };
+
+  type DictDataUpdate = {
+    dictSort: number;
+    dictLabel: string;
+    dictValue: string;
+    dictType: string;
+    cssClass?: string;
+    listClass?: string;
+    isDefault?: string;
+    status?: string;
+    remark?: string;
+  };
+
+  type DictType = {
+    dictId?: number;
+    dictName?: string;
+    dictType?: string;
+    status?: string;
+    remark?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type DictTypeCreate = {
+    dictName: string;
+    dictType: string;
+  };
+
+  type DictTypeListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: Pagination & { data?: DictType[] };
+    };
+
+  type DictTypeResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: DictType;
+    };
+
+  type DictTypeUpdate = {
+    dictName: string;
+    dictType: string;
+  };
+
+  type exportLoginLogParams = {
+    /** 登录IP地址 */
+    ipaddr?: string;
+    /** 登录账号 */
+    loginName?: string;
+    /** 登录状态（0成功 1失败） */
+    status?: 0 | 1;
+    /** 开始时间（时间戳） */
+    startTime?: number;
+    /** 结束时间（时间戳） */
+    endTime?: number;
+  };
+
   type getArticleCategoryListParams = {
     /** 当前页码 */
     current?: number;
@@ -331,9 +440,88 @@ declare namespace API {
     pageSize?: number;
   };
 
+  type getDeptListParams = {
+    /** 部门名称（模糊查询） */
+    deptName?: string;
+    /** 负责人姓名（模糊查询） */
+    leader?: string;
+    /** 部门状态（0-禁用，1-启用） */
+    status?: 0 | 1;
+    /** 创建时间范围-开始时间（时间戳） */
+    startTime?: string;
+    /** 创建时间范围-结束时间（时间戳） */
+    endTime?: string;
+  };
+
   type getDeptParams = {
     /** 部门唯一标识符 */
     deptId: number;
+  };
+
+  type getDeptTreeParams = {
+    /** 部门名称（模糊查询） */
+    deptName?: string;
+    /** 负责人姓名（模糊查询） */
+    leader?: string;
+    /** 部门状态（0-禁用，1-启用） */
+    status?: 0 | 1;
+    /** 创建时间范围-开始时间（时间戳） */
+    startTime?: string;
+    /** 创建时间范围-结束时间（时间戳） */
+    endTime?: string;
+  };
+
+  type getDictDataListParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页条数 */
+    pageSize?: number;
+    /** 字典类型 */
+    dictType?: string;
+    /** 字典标签 */
+    dictLabel?: string;
+  };
+
+  type getDictDataParams = {
+    /** 字典数据编码 */
+    dictCode: number;
+  };
+
+  type getDictTypeListParams = {
+    /** 当前页码 */
+    page?: number;
+    /** 每页条数 */
+    pageSize?: number;
+    /** 字典名称 */
+    dictName?: string;
+    /** 字典类型 */
+    dictType?: string;
+  };
+
+  type getDictTypeParams = {
+    dictId: number;
+  };
+
+  type getLoginLogDetailParams = {
+    /** 登录日志ID */
+    id: number;
+  };
+
+  type getLoginLogListParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页记录数 */
+    pageSize?: number;
+    /** 登录IP地址 */
+    ipaddr?: string;
+    /** 登录账号 */
+    loginName?: string;
+    /** 登录状态（0成功 1失败） */
+    status?: 0 | 1;
+    /** 开始时间（时间戳） */
+    startTime?: number;
+    /** 结束时间（时间戳） */
+    endTime?: number;
   };
 
   type getMediaCategoryListParams = {
@@ -375,6 +563,24 @@ declare namespace API {
     name: string;
   };
 
+  type getPostListParams = {
+    /** 岗位编码 */
+    postCode?: string;
+    /** 岗位名称 */
+    postName?: string;
+    /** 岗位状态，0表示禁用，1表示启用 */
+    status?: 0 | 1;
+    /** 创建时间范围的开始时间 */
+    startTime?: string;
+    /** 创建时间范围的结束时间 */
+    endTime?: string;
+  };
+
+  type getPostParams = {
+    /** 岗位唯一标识符 */
+    postId: number;
+  };
+
   type getRoleParams = {
     /** 角色唯一标识符 */
     roleId: number;
@@ -409,6 +615,29 @@ declare namespace API {
     phone?: string;
     /** 通过状态筛选，0表示禁用，1表示启用 */
     status?: 0 | 1;
+  };
+
+  type LoginLog = {
+    /** 访问ID */
+    infoId?: number;
+    /** 登录账号 */
+    loginName?: string;
+    /** 登录IP地址 */
+    ipaddr?: string;
+    /** 登录地点 */
+    loginLocation?: string;
+    /** 浏览器类型 */
+    browser?: string;
+    /** 操作系统 */
+    os?: string;
+    /** 登录状态（0成功 1失败） */
+    status?: number;
+    /** 提示消息 */
+    msg?: string;
+    /** 访问时间（时间戳） */
+    loginTime?: number;
+    /** 用户ID */
+    userId?: number;
   };
 
   type LoginReq = {
@@ -594,6 +823,60 @@ declare namespace API {
 
   type PhoneLoginType = 'sms' | 'password';
 
+  type PostInfo = {
+    /** 岗位ID */
+    postId?: number;
+    /** 岗位编码 */
+    postCode?: string;
+    /** 岗位名称 */
+    postName?: string;
+    /** 排序序号 */
+    sortOrder?: number;
+    /** 岗位状态，0表示禁用，1表示启用 */
+    status?: 0 | 1;
+    /** 备注 */
+    remark?: string;
+    /** 创建者ID */
+    createdId?: number;
+    /** 创建者名称 */
+    createdBy?: string;
+    /** 创建时间 */
+    createdAt?: string;
+    /** 更新时间 */
+    updatedAt?: string;
+    /** 删除时间，0表示未删除 */
+    deletedAt?: string;
+  };
+
+  type PostListResp = {
+    /** 响应状态码 */
+    code?: number;
+    /** 响应消息 */
+    msg?: string;
+    data?: PostInfo[];
+  };
+
+  type PostReq = {
+    /** 岗位编码 */
+    postCode: string;
+    /** 岗位名称 */
+    postName: string;
+    /** 排序序号 */
+    sortOrder?: number;
+    /** 岗位状态，0表示禁用，1表示启用 */
+    status?: 0 | 1;
+    /** 备注 */
+    remark?: string;
+  };
+
+  type PostResp = {
+    /** 响应状态码 */
+    code?: number;
+    /** 响应消息 */
+    msg?: string;
+    data?: PostInfo;
+  };
+
   type Response = {
     /** Response code */
     code: number;
@@ -687,6 +970,14 @@ declare namespace API {
     deptId: number;
   };
 
+  type updateDictDataParams = {
+    dictCode: number;
+  };
+
+  type updateDictTypeParams = {
+    dictId: number;
+  };
+
   type updateMediaCategoryParams = {
     /** 媒体分类ID */
     categoryId: number;
@@ -700,6 +991,11 @@ declare namespace API {
   type updateMenuParams = {
     /** 菜单的 ID */
     menuId: number;
+  };
+
+  type updatePostParams = {
+    /** 岗位唯一标识符 */
+    postId: number;
   };
 
   type updateRoleParams = {
