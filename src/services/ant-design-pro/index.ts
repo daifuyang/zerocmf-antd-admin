@@ -11,6 +11,7 @@ import * as loginLogs from './loginLogs';
 import * as medias from './medias';
 import * as mediaCategories from './mediaCategories';
 import * as menus from './menus';
+import * as operationLogs from './operationLogs';
 import * as options from './options';
 import * as posts from './posts';
 import * as roles from './roles';
@@ -28,6 +29,7 @@ export default {
   medias,
   mediaCategories,
   menus,
+  operationLogs,
   options,
   posts,
   roles,

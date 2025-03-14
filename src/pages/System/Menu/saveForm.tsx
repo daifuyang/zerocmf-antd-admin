@@ -21,31 +21,33 @@ declare interface Props {
   onOk?: () => void;
 }
 
-const menuTypeOptions = [
-  '目录', '菜单', '按钮'
-]
+const menuTypeOptions = ['目录', '菜单', '按钮'];
 
 const tagColor: any = {
-  'get': '#61affe',
-  'post': '#49cc90',
-  'put': '#fca130',
-  'delete': '#f93e3e'
-}
+  get: '#61affe',
+  post: '#49cc90',
+  put: '#fca130',
+  delete: '#f93e3e',
+};
 
 function treeToMap(tree: any[]) {
-  return _.reduce(tree, (map, node) => {
-    // 将当前节点的 id 和节点对象加入 Map
-    map.set(node.menuId, node);
+  return _.reduce(
+    tree,
+    (map, node) => {
+      // 将当前节点的 id 和节点对象加入 Map
+      map.set(node.menuId, node);
 
-    // 如果有子节点，则递归调用
-    if (node.children && node.children.length > 0) {
-      treeToMap(node.children).forEach((value, key) => {
-        map.set(key, value);
-      });
-    }
+      // 如果有子节点，则递归调用
+      if (node.children && node.children.length > 0) {
+        treeToMap(node.children).forEach((value, key) => {
+          map.set(key, value);
+        });
+      }
 
-    return map;
-  }, new Map());
+      return map;
+    },
+    new Map(),
+  );
 }
 
 const MenuForm = (props: Props) => {
@@ -91,22 +93,24 @@ const MenuForm = (props: Props) => {
     [open, message, form],
   );
 
-  const fetchMenus = useCallback(async () => {
-    const res = await getMenus();
+  const fetchMenus = useCallback(async (params: API.getMenusParams) => {
+    const res = await getMenus(params);
     if (res.code === 1) {
       const options = res.data;
       return [
         {
           menuName: '顶级菜单',
           menuId: 0,
-        }
-        , ...options]
-
+        },
+        ...options,
+      ];
     }
-    return [{
-      menuName: '顶级菜单',
-      menuId: 0,
-    }];
+    return [
+      {
+        menuName: '顶级菜单',
+        menuId: 0,
+      },
+    ];
   }, []);
 
   useEffect(() => {
@@ -116,20 +120,28 @@ const MenuForm = (props: Props) => {
   }, [open, initialValues]);
 
   const initMenus = async () => {
-    const menus = await fetchMenus();
+    const menus = await fetchMenus({});
     const map = treeToMap(menus);
     setMenuMap(map);
+  };
+
+  // 在文件顶部添加类型定义
+  interface ApiItem {
+    id: number;
+    path: string;
+    method: string;
+    [key: string]: any;
   }
 
-  const fetchApis = useCallback(async () => {
+  const fetchApis = useCallback(async (): Promise<ApiItem[]> => {
     const res = await getApis();
     if (res.code === 1) {
       const { data = [] } = res;
       if (data instanceof Array) {
         const obj = _.keyBy(data, 'id');
         setApiMap(obj);
+        return data;
       }
-      return data;
     }
     return [];
   }, []);
@@ -138,7 +150,7 @@ const MenuForm = (props: Props) => {
     if (open && readOnly) {
       initMenus();
     }
-  }, [open, readOnly])
+  }, [open, readOnly]);
 
   return (
     <ModalForm
@@ -157,20 +169,11 @@ const MenuForm = (props: Props) => {
       autoFocusFirstInput
       modalProps={{
         destroyOnClose: true,
-        onCancel: () => { },
+        onCancel: () => {},
         className: 'next-modal',
       }}
       onFinish={async (values) => {
-
-        /* console.log(values);
-
-        const apis = values.apis?.map((id: number) => (
-          apiMap[id]
-        ))
-
-        values.apis = apis; */
-
-        let res: any;
+        let res;
         const { menuId } = values || {};
         if (menuId) {
           res = await updateMenu({ menuId }, values);
@@ -190,13 +193,19 @@ const MenuForm = (props: Props) => {
     >
       <ProFormText colProps={{ span: 0 }} name="menuId" label="id" hidden />
 
-      {
-        readOnly ? <ProFormText colProps={{
-          span: 24,
-        }} label="上级菜单" fieldProps={{
-          readOnly,
-          value: menuMap?.get(initialValues.parentId)?.menuName
-        }} /> : <ProFormTreeSelect
+      {readOnly ? (
+        <ProFormText
+          colProps={{
+            span: 24,
+          }}
+          label="上级菜单"
+          fieldProps={{
+            readOnly,
+            value: menuMap?.get(initialValues.parentId)?.menuName,
+          }}
+        />
+      ) : (
+        <ProFormTreeSelect
           name="parentId"
           label="上级菜单"
           colProps={{
@@ -209,16 +218,21 @@ const MenuForm = (props: Props) => {
             fieldNames: {
               label: 'menuName',
               value: 'menuId',
-            }
+            },
           }}
         />
-      }
+      )}
 
-      {
-        readOnly ? <ProFormText label="菜单类型" fieldProps={{
-          readOnly,
-          value: menuTypeOptions[initialValues.menuType]
-        }} /> : <ProFormRadio.Group
+      {readOnly ? (
+        <ProFormText
+          label="菜单类型"
+          fieldProps={{
+            readOnly,
+            value: menuTypeOptions[initialValues.menuType],
+          }}
+        />
+      ) : (
+        <ProFormRadio.Group
           name="menuType"
           label="菜单类型"
           options={[
@@ -227,7 +241,7 @@ const MenuForm = (props: Props) => {
             { label: '按钮', value: 2 },
           ]}
         />
-      }
+      )}
 
       <ProFormDependency name={['menuType']}>
         {({ menuType }) => {
@@ -239,9 +253,7 @@ const MenuForm = (props: Props) => {
                 colProps={{
                   span: 24,
                 }}
-                placeholder={
-                  readOnly ? '未填写' : '请输入菜单图标'
-                }
+                placeholder={readOnly ? '未填写' : '请输入菜单图标'}
                 fieldProps={{
                   readOnly,
                 }}
@@ -253,18 +265,17 @@ const MenuForm = (props: Props) => {
       <ProFormText
         name="menuName"
         label="菜单名称"
-        placeholder={
-          readOnly ? '未填写' : '请输入菜单名称'
-        }
+        placeholder={readOnly ? '未填写' : '请输入菜单名称'}
         rules={[{ required: true, message: '请输入菜单名称' }]}
         fieldProps={{
           readOnly,
         }}
       />
 
-      <ProFormDigit name="sortOrder" label="显示排序" placeholder={
-        readOnly ? '未填写' : '请输入显示排序'
-      }
+      <ProFormDigit
+        name="sortOrder"
+        label="显示排序"
+        placeholder={readOnly ? '未填写' : '请输入显示排序'}
         fieldProps={{
           readOnly,
         }}
@@ -275,11 +286,16 @@ const MenuForm = (props: Props) => {
           if (menuType !== 1) {
             return (
               <>
-                {
-                  readOnly ? <ProFormText label="是否外链" fieldProps={{
-                    readOnly,
-                    value: initialValues.isFrame === 1 ? '是' : '否'
-                  }} /> : <ProFormRadio.Group
+                {readOnly ? (
+                  <ProFormText
+                    label="是否外链"
+                    fieldProps={{
+                      readOnly,
+                      value: initialValues.isFrame === 1 ? '是' : '否',
+                    }}
+                  />
+                ) : (
+                  <ProFormRadio.Group
                     name="isFrame"
                     label="是否外链"
                     options={[
@@ -288,9 +304,14 @@ const MenuForm = (props: Props) => {
                     ]}
                     rules={[{ required: true, message: '请选择是否外链' }]}
                   />
-                }
+                )}
 
-                <ProFormText name="path" label="路由地址" placeholder="请输入路由地址" fieldProps={{ readOnly }} />
+                <ProFormText
+                  name="path"
+                  label="路由地址"
+                  placeholder="请输入路由地址"
+                  fieldProps={{ readOnly }}
+                />
               </>
             );
           }
@@ -301,7 +322,12 @@ const MenuForm = (props: Props) => {
         {({ menuType }) => {
           if (menuType === 2) {
             return (
-              <ProFormText name="component" label="组件路径" placeholder="请输入组件路径" fieldProps={{ readOnly }} />
+              <ProFormText
+                name="component"
+                label="组件路径"
+                placeholder="请输入组件路径"
+                fieldProps={{ readOnly }}
+              />
             );
           }
         }}
@@ -310,7 +336,14 @@ const MenuForm = (props: Props) => {
       <ProFormDependency name={['menuType']}>
         {({ menuType }) => {
           if (menuType !== 0) {
-            return <ProFormText name="perms" label="权限字符" placeholder="请输入权限字符" fieldProps={{ readOnly }} />;
+            return (
+              <ProFormText
+                name="perms"
+                label="权限字符"
+                placeholder="请输入权限字符"
+                fieldProps={{ readOnly }}
+              />
+            );
           }
         }}
       </ProFormDependency>
@@ -320,12 +353,22 @@ const MenuForm = (props: Props) => {
           if (menuType === 2) {
             return (
               <>
-                <ProFormText name="query" label="路由参数" placeholder="请输入路由参数" fieldProps={{ readOnly }} />
-                {
-                  readOnly ? <ProFormText label="是否缓存" fieldProps={{
-                    readOnly,
-                    value: initialValues.isCache === 1 ? '是' : '否'
-                  }} /> : <ProFormRadio.Group
+                <ProFormText
+                  name="query"
+                  label="路由参数"
+                  placeholder="请输入路由参数"
+                  fieldProps={{ readOnly }}
+                />
+                {readOnly ? (
+                  <ProFormText
+                    label="是否缓存"
+                    fieldProps={{
+                      readOnly,
+                      value: initialValues.isCache === 1 ? '是' : '否',
+                    }}
+                  />
+                ) : (
+                  <ProFormRadio.Group
                     name="isCache"
                     label="是否缓存"
                     options={[
@@ -334,18 +377,23 @@ const MenuForm = (props: Props) => {
                     ]}
                     rules={[{ required: true, message: '请选择是否缓存' }]}
                   />
-                }
+                )}
               </>
             );
           }
         }}
       </ProFormDependency>
 
-      {
-        readOnly ? <ProFormText label="菜单状态" fieldProps={{
-          readOnly,
-          value: initialValues.visible === 1 ? '显示' : '隐藏'
-        }} /> : <ProFormRadio.Group
+      {readOnly ? (
+        <ProFormText
+          label="菜单状态"
+          fieldProps={{
+            readOnly,
+            value: initialValues.visible === 1 ? '显示' : '隐藏',
+          }}
+        />
+      ) : (
+        <ProFormRadio.Group
           name="visible"
           label="显示状态"
           options={[
@@ -354,69 +402,81 @@ const MenuForm = (props: Props) => {
           ]}
           rules={[{ required: true, message: '请选择显示状态' }]}
         />
-
-      }
+      )}
 
       <ProFormDependency name={['menuType']}>
         {({ menuType }) => {
           if (menuType !== 1) {
-            return readOnly ? <ProFormText label="菜单状态" fieldProps={{
-              readOnly,
-              value: initialValues.status === 1 ? '启用' : '禁用'
-            }} /> : <ProFormRadio.Group
-              name="status"
-              label="菜单状态"
-              options={[
-                { label: '启用', value: 1 },
-                { label: '禁用', value: 0 },
-              ]}
-              rules={[{ required: true, message: '请选择菜单状态' }]}
-            />
+            return readOnly ? (
+              <ProFormText
+                label="菜单状态"
+                fieldProps={{
+                  readOnly,
+                  value: initialValues.status === 1 ? '启用' : '禁用',
+                }}
+              />
+            ) : (
+              <ProFormRadio.Group
+                name="status"
+                label="菜单状态"
+                options={[
+                  { label: '启用', value: 1 },
+                  { label: '禁用', value: 0 },
+                ]}
+                rules={[{ required: true, message: '请选择菜单状态' }]}
+              />
+            );
           }
         }}
       </ProFormDependency>
 
-      <ProFormSelect colProps={{
-        span: 24,
-      }} name="apis" label="绑定API" request={fetchApis} fieldProps={{
-        maxTagCount: 7,
-        mode: 'multiple',
-        optionRender: (option) => {
-          const { method } = option.data;
-          return (
-            <Space>
-              <Tag style={{ width: 60, textAlign: 'center' }} color={tagColor[method]}>{method}</Tag>
+      <ProFormSelect
+        colProps={{
+          span: 24,
+        }}
+        name="apis"
+        label="绑定API"
+        request={fetchApis}
+        fieldProps={{
+          maxTagCount: 7,
+          mode: 'multiple',
+          optionRender: (option) => {
+            const { method } = option.data;
+            return (
+              <Space>
+                <Tag style={{ width: 60, textAlign: 'center' }} color={tagColor[method]}>
+                  {method}
+                </Tag>
 
-              {option.data.path}
-            </Space>
-          )
-        },
-        tagRender: (props) => {
-          const { label, value, closable, onClose } = props;
-          const { method } = apiMap?.[value] || {};
-          const color = tagColor[method];
-          const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
-            event.preventDefault();
-            event.stopPropagation();
-          };
-          return (
-            <Tag
-              color={color}
-              onMouseDown={onPreventMouseDown}
-              closable={closable}
-              onClose={onClose}
-            >
-              {label}
-            </Tag>
-          );
-        },
-        fieldNames: {
-          label: 'path',
-          value: 'id',
-        }
-      }} />
-
-
+                {option.data.path}
+              </Space>
+            );
+          },
+          tagRender: (props) => {
+            const { label, value, closable, onClose } = props;
+            const { method } = apiMap?.[value] || {};
+            const color = tagColor[method];
+            const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+              event.preventDefault();
+              event.stopPropagation();
+            };
+            return (
+              <Tag
+                color={color}
+                onMouseDown={onPreventMouseDown}
+                closable={closable}
+                onClose={onClose}
+              >
+                {label}
+              </Tag>
+            );
+          },
+          fieldNames: {
+            label: 'path',
+            value: 'id',
+          },
+        }}
+      />
     </ModalForm>
   );
 };

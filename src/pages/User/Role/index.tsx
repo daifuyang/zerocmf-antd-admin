@@ -32,7 +32,7 @@ const columns: ProColumns<Role>[] = [
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    dataIndex: 'createdTime',
     valueType: 'dateTime',
     width: 200,
     hideInSearch: true,
@@ -53,7 +53,7 @@ const columns: ProColumns<Role>[] = [
   },
   {
     title: '更新时间',
-    dataIndex: 'updateTime',
+    dataIndex: 'updatedTime',
     valueType: 'dateTime',
     width: 200,
     hideInSearch: true,
@@ -69,7 +69,7 @@ const columns: ProColumns<Role>[] = [
       enabled: { text: '启用', status: 'Success' },
       disabled: { text: '禁用', status: 'Error' },
     },
-    renderText(text, record, index, action) {
+    renderText(text, record) {
       return record.status ? <Tag color="success">启用</Tag> : <Tag color="default">禁用</Tag>;
     },
   },
@@ -122,7 +122,7 @@ const RoleList: React.FC = () => {
       <ProTable<Role>
         actionRef={tableRef}
         columns={columns}
-        request={async (params, sort, filter) => {
+        request={async (params) => {
           const { status = '' } = params;
           params.status = valueEnum[status];
           const res: any = await getRoles(params);

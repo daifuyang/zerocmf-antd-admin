@@ -17,6 +17,16 @@ type MenuItem = {
   created_at: string;
 };
 
+const statusEnum: {
+  all: undefined;
+  enabled: 1;
+  disabled: 0;
+} = {
+  all: undefined,
+  enabled: 1,
+  disabled: 0,
+};
+
 const columns: ProColumns<MenuItem>[] = [
   {
     width: 180,
@@ -79,7 +89,7 @@ const columns: ProColumns<MenuItem>[] = [
   },
   {
     title: '创建时间',
-    dataIndex: 'createdAt',
+    dataIndex: 'createdTime',
     valueType: 'dateTime',
     hideInSearch: true,
     sorter: true,
@@ -89,7 +99,7 @@ const columns: ProColumns<MenuItem>[] = [
     width: 240,
     valueType: 'option',
     key: 'option',
-    render: (text, record, _, action) => {
+    render: (text, record) => {
       return (
         <Space split={<Divider type="vertical" />}>
           <SaveForm title="编辑菜单" key="editable" initialValues={record}>
@@ -133,9 +143,14 @@ export default () => {
         columns={columns}
         actionRef={actionRef}
         cardBordered
-        request={async (params, sort, filter) => {
-          // 替换成你自己的API请求
-          const res: any = await getMenus();
+        request={async (params) => {
+          // 状态转换为数字
+          const formData: API.getMenusParams = {
+            ...params,
+            status: statusEnum[params.status as keyof typeof statusEnum],
+          };
+
+          const res: any = await getMenus(formData);
           if (res.code === 1) {
             return {
               data: res.data,

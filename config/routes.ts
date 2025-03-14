@@ -257,6 +257,16 @@ export default [
             component: './System/Log/Login',
             hideInMenu: true,
           },
+          {
+            path: '/system/log/operate',
+            redirect: '/system/log/operate/list',
+          },
+          {
+            name: 'operate',
+            path: '/system/log/operate/list',
+            component: './System/Log/Operate',
+            hideInMenu: true,
+          },
         ],
       },
     ],

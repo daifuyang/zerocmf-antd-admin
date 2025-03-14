@@ -121,12 +121,12 @@ const LoginLogList: React.FC = () => {
       dataIndex: 'status',
       width: 100,
       valueEnum: {
-        0: { text: '成功', status: 'Success' },
-        1: { text: '失败', status: 'Error' },
+        1: { text: '成功', status: 'Success' },
+        0: { text: '失败', status: 'Error' },
       },
       renderText: (val) => (
-        <Tag color={val === 0 ? 'success' : 'error'}>
-          {val === 0 ? '成功' : '失败'}
+        <Tag color={val === 1 ? 'success' : 'error'}>
+          {val === 1 ? '成功' : '失败'}
         </Tag>
       ),
     },

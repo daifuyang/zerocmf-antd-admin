@@ -407,6 +407,23 @@ declare namespace API {
     endTime?: number;
   };
 
+  type exportOperationLogParams = {
+    /** 模块标题 */
+    title?: string;
+    /** 操作人员 */
+    operName?: string;
+    /** 业务类型（0其它 1新增 2修改 3删除 4授权 5导出 6导入 7强退 8清空数据） */
+    businessType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+    /** 操作状态（0异常 1正常） */
+    status?: 0 | 1;
+    /** 操作IP地址 */
+    operIp?: string;
+    /** 开始时间（时间戳） */
+    startTime?: number;
+    /** 结束时间（时间戳） */
+    endTime?: number;
+  };
+
   type getArticleCategoryListParams = {
     /** 当前页码 */
     current?: number;
@@ -556,6 +573,39 @@ declare namespace API {
   type getMenuParams = {
     /** 菜单的 ID */
     menuId: number;
+  };
+
+  type getMenusParams = {
+    /** 菜单名称（支持模糊查询） */
+    menuName?: string;
+    /** 菜单状态（0停用 1正常） */
+    status?: 0 | 1;
+  };
+
+  type getOperationLogDetailParams = {
+    /** 操作日志ID */
+    id: number;
+  };
+
+  type getOperationLogListParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页记录数 */
+    pageSize?: number;
+    /** 模块标题 */
+    title?: string;
+    /** 操作人员 */
+    operName?: string;
+    /** 业务类型（0其它 1新增 2修改 3删除 4授权 5导出 6导入 7强退 8清空数据） */
+    businessType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+    /** 操作状态（0异常 1正常） */
+    status?: 0 | 1;
+    /** 操作IP地址 */
+    operIp?: string;
+    /** 开始时间（时间戳） */
+    startTime?: number;
+    /** 结束时间（时间戳） */
+    endTime?: number;
   };
 
   type getOptionValueParams = {
@@ -803,6 +853,43 @@ declare namespace API {
     remark?: string;
   };
 
+  type OperationLog = {
+    /** 日志主键 */
+    operId?: number;
+    /** 模块标题 */
+    title?: string;
+    /** 业务类型（0其它 1新增 2修改 3删除 4授权 5导出 6导入 7强退 8清空数据） */
+    businessType?: number;
+    /** 方法名称 */
+    method?: string;
+    /** 请求方式 */
+    requestMethod?: string;
+    /** 操作类别（0其它 1后台用户 2手机端用户） */
+    operatorType?: number;
+    /** 操作人员 */
+    operName?: string;
+    /** 部门名称 */
+    deptName?: string;
+    /** 请求URL */
+    operUrl?: string;
+    /** 主机地址 */
+    operIp?: string;
+    /** 操作地点 */
+    operLocation?: string;
+    /** 请求参数 */
+    operParam?: string;
+    /** 返回参数 */
+    jsonResult?: string;
+    /** 操作状态（0异常 1正常） */
+    status?: number;
+    /** 错误消息 */
+    errorMsg?: string;
+    /** 操作时间（时间戳） */
+    operTime?: number;
+    /** 用户ID */
+    userId?: number;
+  };
+
   type optionResp = {
     /** 状态码 */
     code?: number;
@@ -899,12 +986,14 @@ declare namespace API {
     createdAt?: string;
     /** 更新时间 */
     updatedAt?: string;
+    /** 菜单ID列表 */
+    menuIds?: number[];
   };
 
   type RoleListResp =
     // #/components/schemas/Response
     Response & {
-      data?: { pagination: Pagination; data?: Role[] } | Role[];
+      data?: { page?: number; pageSize?: number; total?: number; data?: Role[] };
     };
 
   type RoleReq = {
@@ -918,9 +1007,11 @@ declare namespace API {
     status?: number;
   };
 
-  type RoleResp = {
-    data?: Role;
-  };
+  type RoleResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: Role;
+    };
 
   type setOptionValueParams = {
     /** 配置项名称 */

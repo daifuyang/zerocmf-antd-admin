@@ -12,7 +12,7 @@ const columns: ProColumns<API.DictData>[] = [
     title: '字典编码',
     dataIndex: 'dictCode',
     valueType: 'checkbox',
-    width: 60,
+    width: 80,
     hideInSearch: true,
   },
   {
