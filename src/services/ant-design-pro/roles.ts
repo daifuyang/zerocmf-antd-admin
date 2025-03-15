@@ -11,6 +11,11 @@ export async function getRoles(
   return request<API.RoleListResp>('/api/v1/admin/roles', {
     method: 'GET',
     params: {
+      // current has a default value: 1
+      current: '1',
+      // pageSize has a default value: 10
+      pageSize: '10',
+
       ...params,
     },
     ...(options || {}),

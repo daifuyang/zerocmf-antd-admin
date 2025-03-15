@@ -8,7 +8,7 @@ export async function getMenus(
   params: API.getMenusParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.MenuResp>('/api/v1/admin/menus', {
+  return request<API.MenuListResp>('/api/v1/admin/menus', {
     method: 'GET',
     params: {
       ...params,

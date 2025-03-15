@@ -1,19 +1,13 @@
 import React, { useRef } from 'react';
 import { ProTable, ProColumns, PageContainer, ActionType } from '@ant-design/pro-components';
-import { Post } from '@/typings/post';
-import { Button, Divider, message, Popconfirm, Space, Tag, Typography } from 'antd';
+import { Button, Divider, message, Popconfirm, Space, Typography } from 'antd';
 import { deletePost, getPostList } from '@/services/ant-design-pro/posts';
 import { PlusOutlined } from '@ant-design/icons';
 import SaveForm from './saveForm';
-
-const valueEnum: any = {
-  all: '',
-  enabled: 1,
-  disabled: 0,
-};
+import statusColumns from '@/components/Table/Form/StatusSelect';
 
 // 列定义
-const columns: ProColumns<Post>[] = [
+const columns: ProColumns<API.Post>[] = [
   {
     title: '岗位编码',
     dataIndex: 'postCode',
@@ -57,15 +51,7 @@ const columns: ProColumns<Post>[] = [
     dataIndex: 'status',
     valueType: 'select',
     width: 100,
-    initialValue: 'all',
-    valueEnum: {
-      all: { text: '全部', status: 'Default' },
-      enabled: { text: '启用', status: 'Success' },
-      disabled: { text: '禁用', status: 'Error' },
-    },
-    renderText(_, record) {
-      return record.status ? <Tag color="success">启用</Tag> : <Tag color="default">禁用</Tag>;
-    },
+    ...statusColumns,
   },
   {
     title: '备注',
@@ -82,14 +68,14 @@ const columns: ProColumns<Post>[] = [
       <Space split={<Divider type="vertical" />}>
         <SaveForm
           title="查看岗位"
-          initialValues={{ ...record, status: valueEnum[record.status] }}
+          initialValues={record}
           readOnly
         >
           <Typography.Link>查看</Typography.Link>
         </SaveForm>
         <SaveForm
           title="编辑岗位"
-          initialValues={{ ...record, status: valueEnum[record.status] }}
+          initialValues={record}
           onOk={() => {
             action?.reload();
           }}
@@ -99,6 +85,10 @@ const columns: ProColumns<Post>[] = [
         <Popconfirm
           title="您确定删除吗？"
           onConfirm={async () => {
+            if (!record.postId) {
+              message.error('岗位不存在！');
+              return;
+            }
             const res = await deletePost({ postId: record.postId });
             if (res.code === 1) {
               message.success(res.msg);
@@ -120,18 +110,16 @@ const PostList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<Post>
+      <ProTable<API.Post, API.getPostListParams>
         actionRef={tableRef}
         columns={columns}
         request={async (params) => {
-          const { status = '' } = params;
-          params.status = valueEnum[status];
-          const res: any = await getPostList(params as API.getPostListParams);
+          const res = await getPostList(params);
           if (res.code === 1) {
             return {
-              data: res.data,
+              data: res.data?.data,
               success: true,
-              total: res.total,
+              total: res.data?.total,
             };
           }
           return {

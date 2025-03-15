@@ -1,19 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { ProTable, ProColumns, PageContainer, ActionType } from '@ant-design/pro-components';
-import { Dept } from '@/typings/dept';
-import { Button, Divider, message, Popconfirm, Space, Tag, Typography } from 'antd';
+import { Button, Divider, message, Popconfirm, Space, Typography } from 'antd';
 import { deleteDept, getDeptTree } from '@/services/ant-design-pro/depts';
 import { PlusOutlined } from '@ant-design/icons';
 import SaveForm from './saveForm';
-
-const valueEnum: any = {
-  all: '',
-  enabled: 1,
-  disabled: 0,
-};
+import statusColumns from '@/components/Table/Form/StatusSelect';
 
 // 列定义
-const columns: ProColumns<Dept>[] = [
+const columns: ProColumns<API.DeptTree>[] = [
   {
     title: '部门名称',
     dataIndex: 'deptName',
@@ -69,15 +63,7 @@ const columns: ProColumns<Dept>[] = [
     dataIndex: 'status',
     valueType: 'select',
     width: 100,
-    initialValue: 'all',
-    valueEnum: {
-      all: { text: '全部', status: 'Default' },
-      enabled: { text: '启用', status: 'Success' },
-      disabled: { text: '禁用', status: 'Error' },
-    },
-    renderText(_, record) {
-      return record.status ? <Tag color="success">启用</Tag> : <Tag color="default">禁用</Tag>;
-    },
+    ...statusColumns
   },
   {
     title: '操作',
@@ -87,14 +73,14 @@ const columns: ProColumns<Dept>[] = [
       <Space split={<Divider type="vertical" />}>
         <SaveForm
           title="查看部门"
-          initialValues={{ ...record, status: valueEnum[record.status] }}
+          initialValues={record}
           readOnly
         >
           <Typography.Link>查看</Typography.Link>
         </SaveForm>
         <SaveForm
           title="编辑部门"
-          initialValues={{ ...record, status: valueEnum[record.status] }}
+          initialValues={record}
           onOk={() => {
             action?.reload();
           }}
@@ -104,7 +90,11 @@ const columns: ProColumns<Dept>[] = [
         <Popconfirm
           title="您确定删除吗？"
           onConfirm={async () => {
-            const res = await deleteDept({ deptId: record.deptId });
+            if (!record?.deptId) {
+              message.error('请选择部门！');
+              return;
+            }
+            const res = await deleteDept({ deptId: record?.deptId });
             if (res.code === 1) {
               message.success(res.msg);
               action?.reload();
@@ -137,13 +127,11 @@ const DeptList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<Dept>
+      <ProTable<API.DeptTree, API.getDeptTreeParams>
         actionRef={tableRef}
         columns={columns}
         request={async (params) => {
-          const { status = '' } = params;
-          params.status = valueEnum[status];
-          const res: any = await getDeptTree(params as API.getDeptTreeParams);
+          const res = await getDeptTree(params);
           if (res.code === 1) {
             if (expandedRowKeys?.length === 0) {
               const flattenIds = flattenTreeIds(res.data);

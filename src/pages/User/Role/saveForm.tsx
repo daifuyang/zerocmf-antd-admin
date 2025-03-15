@@ -1,5 +1,4 @@
 import { addRole, getRole, updateRole } from '@/services/ant-design-pro/roles';
-import { Role } from '@/typings/role';
 import {
   ModalForm,
   ProForm,
@@ -22,6 +21,9 @@ declare interface Props {
 
 // 递归获取所有 id
 const getAllIds = (nodes: any[]): number[] => {
+  if (!nodes || nodes.length === 0) {
+    return [];
+  }
   return _.flatMap(nodes, (node) => [
     node.menuId,
     ...(node.children ? getAllIds(node.children) : []),
@@ -29,12 +31,12 @@ const getAllIds = (nodes: any[]): number[] => {
 };
 
 const SaveForm = (props: Props) => {
-  const [form] = Form.useForm<Role>();
+  const [form] = Form.useForm<API.Role>();
   const { message } = App.useApp();
   const { title, children, initialValues, readOnly = false, onOk } = props;
 
   const [open, setOpen] = useState(false);
-  const [menus, setMenus] = useState<any[]>([]);
+  const [menus, setMenus] = useState<API.Menu[]>([]);
 
   const [expandOpen, setExpandOpen] = useState(false); // 展开收起
   const [checkAllOpen, setCheckAllOpen] = useState(false); // 全选反选
@@ -48,7 +50,7 @@ const SaveForm = (props: Props) => {
     try {
       const res = await getRole({ roleId });
       if (res.code === 1) {
-        form.setFieldsValue(res.data as Role);
+        form.setFieldsValue(res.data);
         if (res.data?.menuIds) {
           setTreeCheckedKeys({ checked: res.data.menuIds });
         }
@@ -62,7 +64,7 @@ const SaveForm = (props: Props) => {
   const fetchMenus = useCallback(async (params = {}) => {
     try {
       const res = await getMenus(params);
-      if (res.code === 1) {
+      if (res.code === 1 && res.data) {
         setMenus(res.data);
         const ids = getAllIds(res.data);
         setDefaultKeys(ids);
@@ -91,7 +93,7 @@ const SaveForm = (props: Props) => {
   };
 
   return (
-    <ModalForm<Role>
+    <ModalForm<API.Role>
       title={title}
       trigger={children}
       form={form}
@@ -114,7 +116,7 @@ const SaveForm = (props: Props) => {
           return true;
         }
 
-        let res: any;
+        let res;
         const { roleId } = values || {};
         if (roleId) {
           res = await updateRole({ roleId }, values);

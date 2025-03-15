@@ -1,5 +1,4 @@
 import { createPost, getPost, updatePost } from '@/services/ant-design-pro/posts';
-import { Post } from '@/typings/post';
 import { ModalForm, ProFormDigit, ProFormRadio, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
 import { App, Form } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
@@ -13,7 +12,7 @@ declare interface Props {
 }
 
 const SaveForm = (props: Props) => {
-  const [form] = Form.useForm<Post>();
+  const [form] = Form.useForm<API.Post>();
   const { message } = App.useApp();
   const { title, children, initialValues = { status: 1 }, readOnly = false, onOk } = props;
 
@@ -24,7 +23,7 @@ const SaveForm = (props: Props) => {
       try {
         const res = await getPost({ postId });
         if (res.code === 1) {
-          form.setFieldsValue(res.data as Post);
+          form.setFieldsValue(res.data);
         }
       } catch (error) {
         message.error('请求失败');
@@ -42,7 +41,7 @@ const SaveForm = (props: Props) => {
   }, [open, initialValues, fetchData]);
 
   return (
-    <ModalForm<Post>
+    <ModalForm<API.Post>
       title={title}
       trigger={children}
       form={form}

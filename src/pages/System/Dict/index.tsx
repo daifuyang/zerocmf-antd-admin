@@ -1,16 +1,11 @@
 import React, { useRef } from 'react';
 import { ProTable, ProColumns, PageContainer, ActionType } from '@ant-design/pro-components';
-import { Button, Divider, message, Popconfirm, Space, Tag, Typography } from 'antd';
+import { Button, Divider, message, Popconfirm, Space, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { getDictTypeList, deleteDictType } from '@/services/ant-design-pro/dicts';
 import SaveForm from './saveForm';
 import { Link } from '@umijs/max';
-
-const valueEnum: any = {
-  all: '',
-  enabled: 1,
-  disabled: 0,
-};
+import statusColumns from '@/components/Table/Form/StatusSelect';
 
 const columns: ProColumns<API.DictType>[] = [
   {
@@ -28,23 +23,14 @@ const columns: ProColumns<API.DictType>[] = [
     title: '字典类型',
     dataIndex: 'dictType',
     width: 180,
-    renderText: (val, record) => (
-      <Link to={`/system/dict/data/${record.dictId}`}>{val}</Link>
-    )
+    renderText: (val, record) => <Link to={`/system/dict/data/${record.dictId}`}>{val}</Link>,
   },
   {
     title: '状态',
     dataIndex: 'status',
     valueType: 'select',
     width: 100,
-    initialValue: 'all',
-    valueEnum: {
-      all: { text: '全部', status: 'Default' },
-      enabled: { text: '启用', status: 'Success' },
-      disabled: { text: '禁用', status: 'Error' },
-    },
-    renderText: (_, record) =>
-      record.status ? <Tag color="success">启用</Tag> : <Tag color="default">禁用</Tag>,
+    ...statusColumns,
   },
   {
     title: '备注',
@@ -97,18 +83,14 @@ export default () => {
 
   return (
     <PageContainer>
-      <ProTable
+      <ProTable<API.DictType>
         actionRef={tableRef}
         columns={columns}
         request={async (params) => {
-          const { status } = params;
-          params.status = valueEnum[status];
           const res = await getDictTypeList(params);
-          console.log("res", res);
           return {
-            data: res.data?.data,
             success: res.code === 1,
-            total: res.data?.total,
+            ...res.data,
           };
         }}
         rowKey="dictId"

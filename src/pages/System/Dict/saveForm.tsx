@@ -3,13 +3,21 @@ import { ModalForm, ProFormText, ProFormRadio } from '@ant-design/pro-components
 import { createDictType, updateDictType } from '@/services/ant-design-pro/dicts';
 import { App, Form } from 'antd';
 
-export default ({ title, initialValues, onOk, readOnly, children }: any) => {
+interface Props {
+  title: string;
+  initialValues?: API.DictType;
+  onOk?: (values: API.DictType) => void;
+  readOnly?: boolean;
+  children?: JSX.Element;
+}
+
+export default ({ title, initialValues, onOk, readOnly, children }: Props) => {
   const { message } = App.useApp();
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<API.DictType>();
 
   return (
-    <ModalForm
+    <ModalForm<API.DictType>
       form={form}
       title={title}
       trigger={children}
@@ -29,9 +37,9 @@ export default ({ title, initialValues, onOk, readOnly, children }: any) => {
         let res;
         const { dictId } = values;
         if (dictId) {
-          res = await updateDictType({ dictId }, values as API.DictTypeUpdate);
+          res = await updateDictType({ dictId }, values);
         } else {
-          res = await createDictType(values as API.DictTypeCreate);
+          res = await createDictType(values);
         }
         if (res.code === 1) {
           message.success(res.msg);

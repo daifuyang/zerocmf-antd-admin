@@ -5,29 +5,9 @@ import { Button, Divider, Dropdown, Space, Tag, Tooltip } from 'antd';
 import { useRef } from 'react';
 import SaveForm from './saveForm';
 import { getMenus } from '@/services/ant-design-pro/menus';
+import statusColumns from '@/components/Table/Form/StatusSelect';
 
-type MenuItem = {
-  id: number;
-  name: string;
-  icon: string;
-  sortOrder: number;
-  permission: string;
-  component: string;
-  status: string;
-  created_at: string;
-};
-
-const statusEnum: {
-  all: undefined;
-  enabled: 1;
-  disabled: 0;
-} = {
-  all: undefined,
-  enabled: 1,
-  disabled: 0,
-};
-
-const columns: ProColumns<MenuItem>[] = [
+const columns: ProColumns<API.Menu>[] = [
   {
     width: 180,
     title: '菜单名称',
@@ -78,14 +58,8 @@ const columns: ProColumns<MenuItem>[] = [
   {
     title: '状态',
     dataIndex: 'status',
-    valueEnum: {
-      all: { text: '全部' },
-      enabled: { text: '启用', status: 'Success' },
-      disabled: { text: '禁用', status: 'Error' },
-    },
-    render: (_, record) => {
-      return <Tag color={record.status ? 'green' : 'red'}>{record.status ? '启用' : '禁用'}</Tag>;
-    },
+    valueType: 'select',
+    ...statusColumns
   },
   {
     title: '创建时间',
@@ -139,18 +113,13 @@ export default () => {
   const actionRef = useRef<ActionType>();
   return (
     <PageContainer>
-      <ProTable<MenuItem>
+      <ProTable<API.Menu, API.getMenusParams>
         columns={columns}
         actionRef={actionRef}
         cardBordered
         request={async (params) => {
           // 状态转换为数字
-          const formData: API.getMenusParams = {
-            ...params,
-            status: statusEnum[params.status as keyof typeof statusEnum],
-          };
-
-          const res: any = await getMenus(formData);
+          const res: any = await getMenus(params);
           if (res.code === 1) {
             return {
               data: res.data,
@@ -165,6 +134,7 @@ export default () => {
           type: 'multiple',
         }}
         rowKey="menuId"
+        pagination={false}
         search={{
           labelWidth: 'auto',
         }}

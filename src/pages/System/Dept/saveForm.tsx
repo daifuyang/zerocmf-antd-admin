@@ -1,5 +1,5 @@
 import { createDept, getDept, updateDept, getDeptTree } from '@/services/ant-design-pro/depts';
-import { Dept } from '@/typings/dept';
+
 import { ModalForm, ProFormDigit, ProFormRadio, ProFormText, ProFormTreeSelect } from '@ant-design/pro-components';
 import { App, Form } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ declare interface Props {
 }
 
 const SaveForm = (props: Props) => {
-  const [form] = Form.useForm<Dept>();
+  const [form] = Form.useForm<API.Dept>();
   const { message } = App.useApp();
   const { title, children, initialValues = { status: 1, parentId: 0 }, readOnly = false, onOk } = props;
 
@@ -24,7 +24,7 @@ const SaveForm = (props: Props) => {
       try {
         const res = await getDept({ deptId });
         if (res.code === 1) {
-          form.setFieldsValue(res.data as Dept);
+          form.setFieldsValue(res.data);
         }
       } catch (error) {
         message.error('请求失败');
@@ -36,7 +36,7 @@ const SaveForm = (props: Props) => {
   // 获取部门树
   const fetchDeptTree = useCallback(async () => {
     try {
-      const res = await getDeptTree();
+      const res = await getDeptTree({});
       if (res.code === 1) {
         return [
           {
@@ -74,7 +74,7 @@ const SaveForm = (props: Props) => {
   }, [open, initialValues, fetchData]);
 
   return (
-    <ModalForm<Dept>
+    <ModalForm<API.Dept>
       title={title}
       trigger={children}
       form={form}
@@ -93,8 +93,8 @@ const SaveForm = (props: Props) => {
           return true;
         }
 
-        let res: any;
-        const { deptId } = values || {};
+        let res;
+        const { deptId } = values;
         if (deptId) {
           res = await updateDept({ deptId }, values);
         } else {

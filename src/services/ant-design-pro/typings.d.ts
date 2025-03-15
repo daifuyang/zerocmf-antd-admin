@@ -222,11 +222,11 @@ declare namespace API {
     userId: number;
   };
 
-  type DeptInfo = {
+  type Dept = {
     /** 部门ID */
     deptId?: number;
     /** 部门名称 */
-    deptName?: string;
+    deptName: string;
     /** 父部门ID */
     parentId?: number;
     /** 排序序号 */
@@ -238,7 +238,7 @@ declare namespace API {
     /** 邮箱 */
     email?: string;
     /** 部门状态，0表示禁用，1表示启用 */
-    status?: number;
+    status?: 0 | 1;
     /** 创建人ID */
     createdId?: number;
     /** 创建人 */
@@ -254,7 +254,7 @@ declare namespace API {
   type DeptListResp =
     // #/components/schemas/Response
     Response & {
-      data?: DeptInfo[];
+      data: Dept[];
     };
 
   type DeptReq = {
@@ -277,10 +277,10 @@ declare namespace API {
   type DeptResp =
     // #/components/schemas/Response
     Response & {
-      data?: DeptInfo;
+      data: Dept;
     };
 
-  type DeptTreeInfo = {
+  type DeptTree = {
     /** 部门ID */
     deptId?: number;
     /** 部门名称 */
@@ -302,13 +302,13 @@ declare namespace API {
     /** 更新时间 */
     updatedAt?: string;
     /** 子部门列表 */
-    children?: DeptTreeInfo[];
+    children?: DeptTree[];
   };
 
   type DeptTreeResp =
     // #/components/schemas/Response
     Response & {
-      data?: DeptTreeInfo[];
+      data: DeptTree[];
     };
 
   type DictData = {
@@ -341,7 +341,7 @@ declare namespace API {
   type DictDataListResp =
     // #/components/schemas/Response
     Response & {
-      data?: Pagination & { data?: DictData[] };
+      data?: (Pagination & { data?: DictData[] }) | DictData[];
     };
 
   type DictDataResp =
@@ -364,8 +364,8 @@ declare namespace API {
 
   type DictType = {
     dictId?: number;
-    dictName?: string;
-    dictType?: string;
+    dictName: string;
+    dictType: string;
     status?: string;
     remark?: string;
     createdAt?: string;
@@ -380,7 +380,7 @@ declare namespace API {
   type DictTypeListResp =
     // #/components/schemas/Response
     Response & {
-      data?: Pagination & { data?: DictType[] };
+      data?: (Pagination & { data?: DictType[] }) | DictType[];
     };
 
   type DictTypeResp =
@@ -507,7 +507,7 @@ declare namespace API {
   type getDictTypeListParams = {
     /** 当前页码 */
     page?: number;
-    /** 每页条数 */
+    /** 每页条数，当值为0时返回所有数据不分页 */
     pageSize?: number;
     /** 字典名称 */
     dictName?: string;
@@ -614,6 +614,10 @@ declare namespace API {
   };
 
   type getPostListParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页条数 */
+    pageSize?: number;
     /** 岗位编码 */
     postCode?: string;
     /** 岗位名称 */
@@ -638,9 +642,11 @@ declare namespace API {
 
   type getRolesParams = {
     /** 当前页 */
-    page?: number;
+    current?: number;
     /** 每页数量 */
     pageSize?: number;
+    /** 是否获取全部列表，设置为1时返回所有数据，不进行分页 */
+    isAll?: 0 | 1;
     /** 角色名称 */
     name?: string;
     /** 角色描述 */
@@ -656,9 +662,11 @@ declare namespace API {
 
   type getUsersParams = {
     /** 当前页 */
-    page?: number;
+    current?: number;
     /** 每页数量 */
     pageSize?: number;
+    /** 是否获取全部列表，设置为1时返回所有数据，不进行分页 */
+    isAll?: 0 | 1;
     /** 通过登录名筛选 */
     loginName?: string;
     /** 通过手机号筛选 */
@@ -765,7 +773,7 @@ declare namespace API {
 
   type Menu = {
     /** 菜单ID */
-    menuId?: number;
+    menuId: number;
     /** 菜单名称 */
     menuName?: string;
     /** 路由路径 */
@@ -808,11 +816,14 @@ declare namespace API {
     remark?: string;
   };
 
-  type MenuListResp =
-    // #/components/schemas/MenuResp
-    MenuResp & {
-      data?: { pagination: Pagination; roles: Menu[] } | Menu[];
-    };
+  type MenuListResp = {
+    /** 响应状态码 */
+    code?: number;
+    /** 响应消息 */
+    msg?: string;
+    /** 菜单列表数据 */
+    data?: Menu[];
+  };
 
   type MenuReq = {
     /** 菜单名称 */
@@ -851,6 +862,15 @@ declare namespace API {
     updatedBy?: string;
     /** 备注 */
     remark?: string;
+  };
+
+  type MenuResp = {
+    /** 响应状态码 */
+    code?: number;
+    /** 响应消息 */
+    msg?: string;
+    /** 菜单数据 */
+    data?: Menu;
   };
 
   type OperationLog = {
@@ -910,13 +930,13 @@ declare namespace API {
 
   type PhoneLoginType = 'sms' | 'password';
 
-  type PostInfo = {
+  type Post = {
     /** 岗位ID */
     postId?: number;
     /** 岗位编码 */
-    postCode?: string;
+    postCode: string;
     /** 岗位名称 */
-    postName?: string;
+    postName: string;
     /** 排序序号 */
     sortOrder?: number;
     /** 岗位状态，0表示禁用，1表示启用 */
@@ -940,7 +960,7 @@ declare namespace API {
     code?: number;
     /** 响应消息 */
     msg?: string;
-    data?: PostInfo[];
+    data: { page?: number; pageSize?: number; total?: number; data?: Post[] };
   };
 
   type PostReq = {
@@ -961,7 +981,7 @@ declare namespace API {
     code?: number;
     /** 响应消息 */
     msg?: string;
-    data?: PostInfo;
+    data: Post;
   };
 
   type Response = {
@@ -973,7 +993,7 @@ declare namespace API {
 
   type Role = {
     /** 角色ID */
-    roleId?: number;
+    roleId: number;
     /** 角色名称 */
     name?: string;
     /** 角色描述 */
@@ -993,7 +1013,7 @@ declare namespace API {
   type RoleListResp =
     // #/components/schemas/Response
     Response & {
-      data?: { page?: number; pageSize?: number; total?: number; data?: Role[] };
+      data?: (Pagination & { data?: Role[] }) | Role[];
     };
 
   type RoleReq = {
@@ -1010,12 +1030,12 @@ declare namespace API {
   type RoleResp =
     // #/components/schemas/Response
     Response & {
-      data?: Role;
+      data: Role;
     };
 
   type setOptionValueParams = {
     /** 配置项名称 */
-    name: number;
+    name: string;
   };
 
   type TagListResp =
@@ -1104,39 +1124,70 @@ declare namespace API {
     userId: number;
     /** 登录名 */
     loginName: string;
-    /** 邮箱地址，可以为空 */
+    /** 邮箱地址 */
     email?: string;
-    /** 手机号，可以为空 */
+    /** 手机号码 */
     phone?: string;
     /** 昵称 */
     nickname?: string;
-    /** 真实姓名，可以为空 */
-    realName?: string;
-    /** 性别 (0: 未知, 1: 男, 2: 女) */
-    gender: number;
-    /** 生日，可以为空 */
-    birthday?: string;
-    /** 用户类型 */
+    /** 真实姓名 */
+    realname?: string;
+    /** 性别，1表示男性，0表示女性 */
+    gender?: 0 | 1;
+    /** 出生日期（Unix 时间戳） */
+    birthday?: number;
+    /** 用户类型，1 表示管理员 */
     userType: number;
-    /** 名字，可以为空 */
-    name?: string;
-    /** 头像URL，可以为空 */
+    /** 用户头像URL */
     avatar?: string;
-    /** 最后登录IP，可以为空 */
+    /** 最后登录IP */
     loginIp?: string;
-    /** 最后登录时间，可以为空 */
+    /** 最后登录时间（Unix 时间戳） */
     loginTime?: string;
-    /** 用户状态 */
-    status: number;
-    /** 创建时间 */
+    /** 状态，0表示禁用，1表示启用 */
+    status: 0 | 1;
+    /** 创建时间（Unix 时间戳） */
     createdAt: string;
-    /** 更新时间 */
+    /** 更新时间（Unix 时间戳） */
     updatedAt: string;
+    /** 删除时间（Unix 时间戳），0表示未删除 */
+    deletedAt?: string;
   };
+
+  type UserListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: (Pagination & { data?: User[] }) | User[];
+    };
 
   type UserResp =
     // #/components/schemas/Response
     Response & {
-      data?: User;
+      data: User;
     };
+
+  type UserSaveReq = {
+    /** 登录名 */
+    loginName: string;
+    /** 邮箱地址 */
+    email?: string;
+    /** 手机号码 */
+    phone?: string;
+    /** 昵称 */
+    nickname?: string;
+    /** 真实姓名 */
+    realname?: string;
+    /** 登录密码 */
+    password?: string;
+    /** 性别，1表示男性，0表示女性 */
+    gender?: 0 | 1;
+    /** 出生日期（Unix 时间戳） */
+    birthday?: number;
+    /** 用户类型，1 表示管理员 */
+    userType?: number;
+    /** 用户头像URL */
+    avatar?: string;
+    /** 状态，0表示禁用，1表示启用 */
+    status: 0 | 1;
+  };
 }

@@ -11,6 +11,11 @@ export async function getPostList(
   return request<API.PostListResp>('/api/v1/admin/posts', {
     method: 'GET',
     params: {
+      // current has a default value: 1
+      current: '1',
+      // pageSize has a default value: 10
+      pageSize: '10',
+
       ...params,
     },
     ...(options || {}),

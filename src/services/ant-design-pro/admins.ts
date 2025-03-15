@@ -2,15 +2,20 @@
 /* eslint-disable */
 import { request } from '@umijs/max';
 
-/** 获取管理员用户列表 获取管理员用户的分页列表，支持通过登录名、手机号和状态进行筛选。 GET /api/v1/admin/users */
+/** 获取管理员用户列表 获取管理员用户的列表，支持分页列表或全部列表，并支持通过登录名、手机号和状态进行筛选。 GET /api/v1/admin/users */
 export async function getUsers(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getUsersParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.UserResp>('/api/v1/admin/users', {
+  return request<API.UserListResp>('/api/v1/admin/users', {
     method: 'GET',
     params: {
+      // current has a default value: 1
+      current: '1',
+      // pageSize has a default value: 10
+      pageSize: '10',
+
       ...params,
     },
     ...(options || {}),
@@ -18,33 +23,7 @@ export async function getUsers(
 }
 
 /** 添加管理员用户 添加新的管理员用户。 POST /api/v1/admin/users */
-export async function addUser(
-  body: {
-    /** 登录名 */
-    loginName: string;
-    /** 邮箱地址 */
-    email?: string;
-    /** 手机号码 */
-    phone: string;
-    /** 昵称 */
-    nickname?: string;
-    /** 真实姓名 */
-    realname?: string;
-    /** 登录密码 */
-    password: string;
-    /** 性别，1表示男性，0表示女性 */
-    gender?: 0 | 1;
-    /** 出生日期（Unix 时间戳） */
-    birthday?: number;
-    /** 用户类型，1 表示管理员 */
-    userType?: number;
-    /** 用户头像URL */
-    avatar?: string;
-    /** 状态，0表示禁用，1表示启用 */
-    status: 0 | 1;
-  },
-  options?: { [key: string]: any },
-) {
+export async function addUser(body: API.UserSaveReq, options?: { [key: string]: any }) {
   return request<API.UserResp>('/api/v1/admin/users', {
     method: 'POST',
     headers: {
@@ -73,30 +52,7 @@ export async function getUser(
 export async function updateUser(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.updateUserParams,
-  body: {
-    /** 登录名 */
-    loginName: string;
-    /** 邮箱地址 */
-    email?: string;
-    /** 手机号码 */
-    phone: string;
-    /** 昵称 */
-    nickname?: string;
-    /** 真实姓名 */
-    realname?: string;
-    /** 登录密码 */
-    password: string;
-    /** 性别，1表示男性，0表示女性 */
-    gender?: 0 | 1;
-    /** 出生日期（Unix 时间戳） */
-    birthday?: number;
-    /** 用户类型，1 表示管理员 */
-    userType?: number;
-    /** 用户头像URL */
-    avatar?: string;
-    /** 状态，0表示禁用，1表示启用 */
-    status: 0 | 1;
-  },
+  body: API.UserSaveReq,
   options?: { [key: string]: any },
 ) {
   const { userId: param0, ...queryParams } = params;

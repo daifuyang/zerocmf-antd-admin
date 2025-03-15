@@ -1,7 +1,5 @@
 import { addUser, getUser, updateUser } from '@/services/ant-design-pro/admins';
 import { getRoles } from '@/services/ant-design-pro/roles';
-import { Admin } from '@/typings/admin';
-import { Role } from '@/typings/role';
 import {
   ModalForm,
   ProFormCheckbox,
@@ -14,20 +12,18 @@ import {
 import { App, Form } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 
-declare interface Props {
+interface Props {
   title: string;
-  children: any;
-  initialValues?: Partial<any>;
+  children: JSX.Element;
+  initialValues?: Partial<API.User>;
   readOnly?: boolean;
   onOk?: () => void;
 }
 
-const genderLabelArr = [
-  "保密", "男", "女"
-]
+const genderLabelArr = ['保密', '男', '女'];
 
 const SaveForm = (props: Props) => {
-  const [form] = Form.useForm<Admin>();
+  const [form] = Form.useForm<API.User>();
   const { message } = App.useApp();
 
   const [open, setOpen] = useState(false);
@@ -38,7 +34,7 @@ const SaveForm = (props: Props) => {
       try {
         const res = await getUser({ userId });
         if (res.code === 1) {
-          form.setFieldsValue(res.data as Admin);
+          form.setFieldsValue(res.data);
         }
       } catch (error) {
         message.error('请求失败');
@@ -54,7 +50,7 @@ const SaveForm = (props: Props) => {
   }, [open]);
 
   return (
-    <ModalForm<Admin>
+    <ModalForm<API.User>
       title={title}
       trigger={children}
       form={form}
@@ -71,11 +67,11 @@ const SaveForm = (props: Props) => {
       initialValues={initialValues}
       modalProps={{
         destroyOnClose: true,
-        onCancel: () => { },
-        className: "next-modal"
+        onCancel: () => {},
+        className: 'next-modal',
       }}
       onFinish={async (values) => {
-        let res: any;
+        let res;
         const { userId } = values || {};
         if (userId) {
           res = await updateUser({ userId }, values);
@@ -93,7 +89,13 @@ const SaveForm = (props: Props) => {
         return false;
       }}
     >
-      <ProFormText fieldProps={{ readOnly }} colProps={{ span: 0 }} name="userId" label="userId" hidden></ProFormText>
+      <ProFormText
+        fieldProps={{ readOnly }}
+        colProps={{ span: 0 }}
+        name="userId"
+        label="userId"
+        hidden
+      ></ProFormText>
 
       <ProFormText
         fieldProps={{ readOnly }}
@@ -108,41 +110,69 @@ const SaveForm = (props: Props) => {
         name="password"
         label="登录密码"
         placeholder={readOnly ? '保密' : '请输入登录密码'}
-        rules={initialValues?.id ? [] : [{ required: true, message: '请输入登录密码' }]}
+        rules={initialValues?.userId ? [] : [{ required: true, message: '请输入登录密码' }]}
       />
 
-      <ProFormText fieldProps={{ readOnly }} name="phone" label="手机号码" placeholder={readOnly ? '未填写' : '请输入手机号码'} />
-      <ProFormText fieldProps={{ readOnly }} name="email" label="邮箱" placeholder={readOnly ? '未填写' : '请输入邮箱'} />
+      <ProFormText
+        fieldProps={{ readOnly }}
+        name="phone"
+        label="手机号码"
+        placeholder={readOnly ? '未填写' : '请输入手机号码'}
+      />
+      <ProFormText
+        fieldProps={{ readOnly }}
+        name="email"
+        label="邮箱"
+        placeholder={readOnly ? '未填写' : '请输入邮箱'}
+      />
 
-      <ProFormText fieldProps={{ readOnly }} name="nickname" label="用户昵称" placeholder={readOnly ? '未填写' : '请输入用户昵称'} />
-      <ProFormText fieldProps={{ readOnly }} name="realname" label="真实姓名" placeholder={readOnly ? '未填写' : '请输入真实姓名'} />
+      <ProFormText
+        fieldProps={{ readOnly }}
+        name="nickname"
+        label="用户昵称"
+        placeholder={readOnly ? '未填写' : '请输入用户昵称'}
+      />
+      <ProFormText
+        fieldProps={{ readOnly }}
+        name="realname"
+        label="真实姓名"
+        placeholder={readOnly ? '未填写' : '请输入真实姓名'}
+      />
 
-      {
-        readOnly ?
-          <ProFormText fieldProps={{ readOnly, value: genderLabelArr[initialValues?.gender || 0] }} label="性别" placeholder="未填写" />
-          : <ProFormSelect
-            name="gender"
-            label="性别"
-            options={[
-              { label: '保密', value: 0 },
-              { label: '男', value: 1 },
-              { label: '女', value: 2 },
-            ]}
-          />
-      }
+      {readOnly ? (
+        <ProFormText
+          fieldProps={{ readOnly, value: genderLabelArr[initialValues?.gender || 0] }}
+          label="性别"
+          placeholder="未填写"
+        />
+      ) : (
+        <ProFormSelect
+          name="gender"
+          label="性别"
+          options={[
+            { label: '保密', value: 0 },
+            { label: '男', value: 1 },
+            { label: '女', value: 2 },
+          ]}
+        />
+      )}
 
-      {
-        readOnly ?
-          <ProFormText fieldProps={{ readOnly, value: initialValues?.status === 1 ? '启用' : '禁用' }} label="状态" placeholder="未填写" />
-          : <ProFormRadio.Group
-            name="status"
-            label="状态"
-            options={[
-              { label: '启用', value: 1 },
-              { label: '禁用', value: 0 },
-            ]}
-          />
-      }
+      {readOnly ? (
+        <ProFormText
+          fieldProps={{ readOnly, value: initialValues?.status === 1 ? '启用' : '禁用' }}
+          label="状态"
+          placeholder="未填写"
+        />
+      ) : (
+        <ProFormRadio.Group
+          name="status"
+          label="状态"
+          options={[
+            { label: '启用', value: 1 },
+            { label: '禁用', value: 0 },
+          ]}
+        />
+      )}
 
       <ProFormUploadButton
         colProps={{ span: 24 }}
@@ -158,7 +188,7 @@ const SaveForm = (props: Props) => {
         request={async () => {
           const res = await getRoles({ pageSize: 0 });
           if (res.code === 1) {
-            return (res.data as Role[]).map((item) => {
+            return (res.data as API.Role[])?.map((item) => {
               return {
                 label: item.name,
                 value: item.roleId,
@@ -171,7 +201,7 @@ const SaveForm = (props: Props) => {
 
       <ProFormTextArea
         fieldProps={{
-          readOnly
+          readOnly,
         }}
         colProps={{ span: 24 }}
         name="remark"

@@ -1,19 +1,13 @@
 import React from 'react';
 import { ProTable, ProColumns, PageContainer, ActionType } from '@ant-design/pro-components';
-import { Role } from '@/typings/role';
-import { Button, Divider, message, Popconfirm, Space, Tag, Typography } from 'antd';
+import { Button, Divider, message, Popconfirm, Space, Typography } from 'antd';
 import { deleteRole, getRoles } from '@/services/ant-design-pro/roles';
 import { PlusOutlined } from '@ant-design/icons';
 import SaveForm from './saveForm';
-
-const valueEnum: any = {
-  all: '',
-  enabled: 1,
-  disabled: 0,
-};
+import statusColumns from '@/components/Table/Form/StatusSelect';
 
 // 列定义
-const columns: ProColumns<Role>[] = [
+const columns: ProColumns<API.Role>[] = [
   {
     title: '角色编号',
     dataIndex: 'roleId',
@@ -63,15 +57,7 @@ const columns: ProColumns<Role>[] = [
     dataIndex: 'status',
     valueType: 'select',
     width: 100,
-    initialValue: 'all',
-    valueEnum: {
-      all: { text: '全部', status: 'Default' },
-      enabled: { text: '启用', status: 'Success' },
-      disabled: { text: '禁用', status: 'Error' },
-    },
-    renderText(text, record) {
-      return record.status ? <Tag color="success">启用</Tag> : <Tag color="default">禁用</Tag>;
-    },
+    ...statusColumns,
   },
   {
     title: '操作',
@@ -81,14 +67,14 @@ const columns: ProColumns<Role>[] = [
       <Space split={<Divider type="vertical" />}>
         <SaveForm
           title="查看角色"
-          initialValues={{ ...record, status: valueEnum[record.status] }}
+          initialValues={record}
           readOnly
         >
           <Typography.Link>查看</Typography.Link>
         </SaveForm>
         <SaveForm
           title="编辑角色"
-          initialValues={{ ...record, status: valueEnum[record.status] }}
+          initialValues={record}
           onOk={() => {
             action?.reload();
           }}
@@ -119,19 +105,14 @@ const RoleList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<Role>
+      <ProTable<API.Role>
         actionRef={tableRef}
         columns={columns}
         request={async (params) => {
-          const { status = '' } = params;
-          params.status = valueEnum[status];
-          const res: any = await getRoles(params);
+          const res = await getRoles(params);
           if (res.code === 1) {
-            const data = res.data.data;
             return {
-              data,
-              page: res.data.page,
-              total: res.data.total,
+              ...res.data,
               success: true,
             };
           }

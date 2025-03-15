@@ -152,9 +152,8 @@ export default () => {
           }
           const res = await getDictDataList({ ...params });
           return {
-            data: res.data?.data,
             success: res.code === 1,
-            total: res.data?.total,
+            ...res.data
           };
         }}
         rowKey="dictCode"

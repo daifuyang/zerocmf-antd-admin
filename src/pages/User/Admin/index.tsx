@@ -1,19 +1,14 @@
 import React from 'react';
 import { ProTable, ProColumns, PageContainer, ActionType } from '@ant-design/pro-components';
-import { Admin } from '@/typings/admin'; // 使用上次的User类型
-import { Button, Divider, message, Popconfirm, Space, Tag, Typography } from 'antd';
+
+import { Button, Divider, message, Popconfirm, Space, Typography } from 'antd';
 import { deleteUser, getUsers } from '@/services/ant-design-pro/admins'; // 调用用户相关的服务接口
 import { PlusOutlined } from '@ant-design/icons';
 import SaveForm from './saveForm'; // 表单保存组件
-
-const valueEnum: any = {
-  all: '',
-  enabled: 1,
-  disabled: 0,
-};
+import statusColumns from '@/components/Table/Form/StatusSelect';
 
 // 列定义
-const columns: ProColumns<Admin>[] = [
+const columns: ProColumns<API.User>[] = [
   {
     title: 'ID',
     dataIndex: 'userId',
@@ -73,15 +68,7 @@ const columns: ProColumns<Admin>[] = [
     dataIndex: 'status',
     valueType: 'select',
     width: 80,
-    initialValue: 'all',
-    valueEnum: {
-      all: { text: '全部', status: 'Default' },
-      enabled: { text: '启用', status: 'Success' },
-      disabled: { text: '禁用', status: 'Error' },
-    },
-    renderText(text, record) {
-      return record.status === 1 ? <Tag color="success">启用</Tag> : <Tag color="default">禁用</Tag>;
-    },
+    ...statusColumns
   },
   {
     title: '操作',
@@ -129,22 +116,14 @@ const UserList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<Admin>
+      <ProTable<API.User>
         actionRef={tableRef}
         columns={columns}
         request={async (params) => {
-          const { status = '' } = params;
-          params.status = undefined;
-          if (valueEnum[status]) {
-            params.status = valueEnum[status];
-          }
-          const res: any = await getUsers(params); // 获取用户列表的接口
+          const res = await getUsers(params); // 获取用户列表的接口
           if (res.code === 1) {
-            const data = res.data.data;
             return {
-              data,
-              page: res.data.page,
-              total: res.data.total,
+              ...res.data,
               success: true,
             };
           }
