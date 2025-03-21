@@ -20,12 +20,6 @@ export default [
     component: './User/Login',
   },
   {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: './Welcome',
-  },
-  {
     path: '/user',
     name: 'user',
     icon: 'user',

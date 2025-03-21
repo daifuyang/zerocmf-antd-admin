@@ -6,18 +6,19 @@ import { createStyles } from 'antd-style';
 import { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { history } from '@umijs/max';
+import { publicPath } from '@/utils/constant';
 
 const useStyles = createStyles(({ css }) => {
   return {
     root: {
       display: 'flex',
-      backgroundImage: "url('/assets/images/login-bg.png')",
+      backgroundImage: `url('${publicPath}assets/images/login-bg.png')`,
       backgroundSize: 'cover',
       width: '100%',
       height: '100vh',
     },
     brand: {
-      backgroundImage: "url('/assets/images/login-brand.png')",
+      backgroundImage: `url('${publicPath}assets/images/login-brand.png')`,
       backgroundSize: '100% 100%',
       width: '56.67%',
       height: '100%',

@@ -13,11 +13,11 @@
 - 安装依赖
 
 ```bash
-pnpm install
+npm install
 ```
 
 - 启动项目
 
 ```bash
-pnpm run dev
+npm run dev
 ```

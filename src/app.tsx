@@ -15,7 +15,6 @@ import _ from 'lodash';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/login';
-
 /**
  * 递归查找树形结构中的第一个最深子节点
  * @param {Array} nodes - 树形结构的节点数组
@@ -65,6 +64,7 @@ export async function getInitialState(): Promise<{
       }
 
     } catch (error) {
+      console.log('error', loginPath);
       history.push(loginPath);
     }
     return undefined;
@@ -124,7 +124,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       },
     },
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.currentUser?.loginName,
     },
     menu: {
       locale: false,
