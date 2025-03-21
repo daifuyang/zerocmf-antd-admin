@@ -62,7 +62,6 @@ export async function getInitialState(): Promise<{
       if (res.code === 1) {
         return res.data as API.User;
       }
-
     } catch (error) {
       console.log('error', loginPath);
       history.push(loginPath);
@@ -74,6 +73,8 @@ export async function getInitialState(): Promise<{
     try {
       const res = await getMenus({
         skipErrorHandler: true,
+      } as API.getMenusParams & {
+        skipErrorHandler: true;
       });
       if (res.code === 1) {
         return res.data as any[];
@@ -98,7 +99,7 @@ export async function getInitialState(): Promise<{
       settings: defaultSettings as Partial<LayoutSettings>,
       loginPath,
       menus,
-      fullLayout: false
+      fullLayout: false,
     };
   }
 
@@ -107,7 +108,7 @@ export async function getInitialState(): Promise<{
     fetchMenus,
     settings: defaultSettings as Partial<LayoutSettings>,
     loginPath,
-    fullLayout: false
+    fullLayout: false,
   };
 }
 
@@ -150,7 +151,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
           history.push(node.path);
         }
       }
-
     },
     bgLayoutImgList: [
       {
@@ -174,11 +174,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ],
     links: isDev
       ? [
-        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-          <LinkOutlined />
-          <span>OpenAPI 文档</span>
-        </Link>,
-      ]
+          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+            <LinkOutlined />
+            <span>OpenAPI 文档</span>
+          </Link>,
+        ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
