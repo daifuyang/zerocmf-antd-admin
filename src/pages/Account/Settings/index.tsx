@@ -28,7 +28,7 @@ const UserSettings: React.FC = () => {
     try {
       const res = await updateUser({ userId: currentUser.userId }, values);
       if (res.code === 1) {
-        message.success('个人信息更新成功');
+        message.success(res.msg);
         // 更新全局状态中的用户信息
         if (initialState?.fetchUserInfo) {
           const userInfo = await initialState.fetchUserInfo();

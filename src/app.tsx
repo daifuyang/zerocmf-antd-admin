@@ -53,6 +53,7 @@ export async function getInitialState(): Promise<{
   loginPath?: string;
   fetchMenus?: () => Promise<any[] | undefined>;
   menus?: any[];
+  homePage?: string;
 }> {
   const fetchUserInfo = async () => {
     try {
@@ -88,8 +89,13 @@ export async function getInitialState(): Promise<{
   if (location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
     let menus: any = [];
+    let homePage;
     if (currentUser) {
       menus = await fetchMenus();
+      if (menus && menus.length > 0) {
+        const node: any = findFirstDeepestNode(menus);
+        homePage = node.path;
+      }
     }
     return {
       fetchUserInfo,
@@ -99,6 +105,7 @@ export async function getInitialState(): Promise<{
       loginPath,
       menus,
       fullLayout: false,
+      homePage
     };
   }
 
@@ -116,6 +123,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   return {
     className: initialState?.fullLayout ? 'full-layout' : '',
     actionsRender: () => [<Question key="doc" />, <SelectLang key="SelectLang" />],
+    onMenuHeaderClick: () => {
+      console.log('onMenuHeaderClick', initialState?.homePage);
+      if (initialState?.homePage) {
+        history.push(initialState.homePage);
+      }
+    },
     avatarProps: {
       src: initialState?.currentUser?.avatar || '/assets/images/avatar.png',
       title: <AvatarName />,
@@ -145,9 +158,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       // 跳转到菜单第一个菜单
       if (location.pathname === '/') {
         const menus = initialState?.menus;
-        if (menus && menus.length > 0) {
-          const node: any = findFirstDeepestNode(menus);
-          history.push(node.path);
+        if (menus && menus.length > 0 && initialState?.homePage) {
+          history.push(initialState.homePage);
         }
       }
     },
