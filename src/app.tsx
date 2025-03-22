@@ -63,7 +63,6 @@ export async function getInitialState(): Promise<{
         return res.data as API.User;
       }
     } catch (error) {
-      console.log('error', loginPath);
       history.push(loginPath);
     }
     return undefined;

@@ -20,6 +20,18 @@ export default [
     component: './User/Login',
   },
   {
+    path: '/account',
+    name: 'account',
+    hideInMenu: true,
+    routes: [
+      {
+        path: '/account/settings',
+        name: 'settings',
+        component: './Account/Settings',
+      },
+    ],
+  },
+  {
     path: '/user',
     name: 'user',
     icon: 'user',
