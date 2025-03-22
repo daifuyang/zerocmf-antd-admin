@@ -1,5 +1,4 @@
-// import { outLogin } from '@/services/ant-design-pro.bak/login';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import { createStyles } from 'antd-style';
@@ -17,7 +16,7 @@ export const AvatarName = () => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState || {};
   return (
-    <span className="anticon">{currentUser?.nickname || currentUser?.loginName || '未登录'}</span>
+    <span className="avatar-name">{currentUser?.nickname || currentUser?.loginName || '未登录'}</span>
   );
 };
 
@@ -39,7 +38,7 @@ const useStyles = createStyles(({ token }) => {
   };
 });
 
-export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, children }) => {
+export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu = true, children }) => {
   /**
    * 退出登录，并且将当前的 url 保存
    */
@@ -107,14 +106,9 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
     ...(menu
       ? [
           {
-            key: 'center',
-            icon: <UserOutlined />,
-            label: '个人中心',
-          },
-          {
             key: 'settings',
             icon: <SettingOutlined />,
-            label: '个人设置',
+            label: '个人中心',
           },
           {
             type: 'divider' as const,
