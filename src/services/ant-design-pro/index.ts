@@ -19,6 +19,9 @@ import * as admins from './admins';
 import * as articles from './articles';
 import * as articleCategories from './articleCategories';
 import * as tags from './tags';
+import * as customer from './customer';
+import * as dispatch from './dispatch';
+import * as hospital from './hospital';
 export default {
   apis,
   users,
@@ -37,4 +40,7 @@ export default {
   articles,
   articleCategories,
   tags,
+  customer,
+  dispatch,
+  hospital,
 };

@@ -149,7 +149,7 @@ export default defineConfig({
       // 或者使用在线的版本import { path } from 'path';
 
       // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-      schemaPath: "http://localhost:3000/swagger.json",
+      schemaPath: "http://localhost:3000/api/swagger.json",
       mock: false,
     },
   ],

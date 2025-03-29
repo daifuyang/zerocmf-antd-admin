@@ -20,7 +20,7 @@ declare namespace API {
 
   type Article = {
     /** 文章ID */
-    articleId?: number;
+    articleId: number;
     /** 发布格式 */
     postFormat?: number;
     /** SEO标题 */
@@ -60,7 +60,7 @@ declare namespace API {
     /** 排序权重 */
     order?: number;
     /** 发布时间，Unix时间戳格式 */
-    publishedAt?: number;
+    publishedAt: number;
     /** 创建者ID */
     createId?: number;
     /** 创建者名称 */
@@ -166,6 +166,56 @@ declare namespace API {
     name?: string;
   };
 
+  type createDispatchParams = {
+    /** Dispatch object that needs to be created */
+    body: DispatchInput;
+  };
+
+  type Customer = {
+    id: number;
+    memberNo?: string;
+    name: string;
+    birthDate: string;
+    gender: string;
+    province: string;
+    city: string;
+    district: string;
+    address: string;
+    phone?: string;
+    mobile?: string;
+    wechat?: string;
+    qq?: string;
+    project?: string;
+    status?: number;
+    remark?: string;
+    createdTime?: string;
+    updatedTime?: string;
+  };
+
+  type CustomerInput = {
+    name: string;
+    birthDate: string;
+    gender: string;
+    province: string;
+    city: string;
+    district: string;
+    address: string;
+    phone?: string;
+    mobile?: string;
+    wechat?: string;
+    qq?: string;
+    project?: string;
+    status?: number;
+    remark?: string;
+    operator?: number;
+  };
+
+  type CustomerListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: Pagination & { data: Customer[]; statusOptions: { value?: number; label?: string }[] };
+    };
+
   type deleteArticleCategoryParams = {
     /** 文章分类ID */
     articleCategoryId: number;
@@ -174,6 +224,10 @@ declare namespace API {
   type deleteArticleParams = {
     /** 文章ID */
     articleId: number;
+  };
+
+  type deleteCustomerParams = {
+    customerId: number;
   };
 
   type deleteDeptParams = {
@@ -187,6 +241,15 @@ declare namespace API {
 
   type deleteDictTypeParams = {
     dictId: number;
+  };
+
+  type deleteDispatchParams = {
+    /** ID of dispatch to delete */
+    dispatchId: any;
+  };
+
+  type deleteHospitalParams = {
+    hospitalId: string;
   };
 
   type deleteMediaCategoryParams = {
@@ -457,6 +520,23 @@ declare namespace API {
     pageSize?: number;
   };
 
+  type getCustomerByIdParams = {
+    customerId: string;
+  };
+
+  type getCustomersParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页条数 */
+    pageSize?: number;
+    /** 客户姓名 */
+    name?: string;
+    /** 手机号码 */
+    mobile?: string;
+    /** 客户状态 */
+    status?: number;
+  };
+
   type getDeptListParams = {
     /** 部门名称（模糊查询） */
     deptName?: string;
@@ -517,6 +597,33 @@ declare namespace API {
 
   type getDictTypeParams = {
     dictId: number;
+  };
+
+  type getDispatchByIdParams = {
+    /** ID of dispatch to return */
+    dispatchId: any;
+  };
+
+  type getDispatchesParams = {
+    ''?: any;
+    ''?: any;
+    /** Filter by hospital ID */
+    hospitalId?: any;
+    /** Filter by customer ID */
+    customerId?: any;
+    /** Filter by status (0=待派单,1=已派单,2=已确认,3=已完成,4=已取消) */
+    status?: any;
+  };
+
+  type getHospitalByIdParams = {
+    hospitalId: string;
+  };
+
+  type getHospitalsParams = {
+    /** 当前页码 */
+    current?: number;
+    /** 每页条数 */
+    pageSize?: number;
   };
 
   type getLoginLogDetailParams = {
@@ -674,6 +781,27 @@ declare namespace API {
     /** 通过状态筛选，0表示禁用，1表示启用 */
     status?: 0 | 1;
   };
+
+  type Hospital = {
+    id: string;
+    name: string;
+    address: string;
+    phone: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type HospitalInput = {
+    name: string;
+    address: string;
+    phone: string;
+  };
+
+  type HospitalListResp =
+    // #/components/schemas/Response
+    Response & {
+      data?: Pagination & { data: Hospital[] };
+    };
 
   type LoginLog = {
     /** 访问ID */
@@ -923,9 +1051,10 @@ declare namespace API {
     /** 当前页码 */
     page?: number;
     /** 每页显示的数据条数 */
-    pageSize?: number;
+    pageSize: number;
     /** 总数据条数 */
-    total?: number;
+    total: number;
+    current: number;
   };
 
   type PhoneLoginType = 'sms' | 'password';
@@ -989,6 +1118,7 @@ declare namespace API {
     code: number;
     /** Response message */
     msg: string;
+    data?: Record<string, any>;
   };
 
   type Role = {
@@ -1076,6 +1206,10 @@ declare namespace API {
     articleId: number;
   };
 
+  type updateCustomerParams = {
+    customerId: string;
+  };
+
   type updateDeptParams = {
     /** 部门唯一标识符 */
     deptId: number;
@@ -1087,6 +1221,17 @@ declare namespace API {
 
   type updateDictTypeParams = {
     dictId: number;
+  };
+
+  type updateDispatchParams = {
+    /** ID of dispatch to update */
+    dispatchId: any;
+    /** Dispatch object that needs to be updated */
+    body: DispatchInput;
+  };
+
+  type updateHospitalParams = {
+    hospitalId: string;
   };
 
   type updateMediaCategoryParams = {

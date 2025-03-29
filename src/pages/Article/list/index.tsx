@@ -11,7 +11,7 @@ import { getArticleCategoryList } from '@/services/ant-design-pro/articleCategor
 export default function List() {
   const actionRef = useRef<ActionType>();
 
-  const columns: ProColumns<any>[] = [
+  const columns: ProColumns<API.Article>[] = [
     {
       title: '标题',
       dataIndex: 'title',
@@ -21,11 +21,11 @@ export default function List() {
       dataIndex: 'categoryId',
       valueType: 'treeSelect',
       request: async () => {
-        const res: any = await getArticleCategoryList({ isTree: true });
+        const res = await getArticleCategoryList({ isTree: true });
         if (res.code !== 1) {
           message.error(res.msg);
         }
-        return res.data;
+        return res.data as API.ArticleCategory[];
       },
       fieldProps: {
         fieldNames: {
@@ -66,7 +66,7 @@ export default function List() {
       title: '操作',
       width: 180,
       valueType: 'option',
-      render: (text, record) => {
+      render: (text, record: API.Article) => {
         const categoryIds = record.category?.map?.((item: any) => {
           return {
             value: item.categoryId,
@@ -113,16 +113,15 @@ export default function List() {
 
   return (
     <PageContainer>
-      <ProTable<any>
+      <ProTable<API.Article>
         columns={columns}
         actionRef={actionRef}
         request={async (params) => {
-          const res: any = await getArticleList(params);
+          const res = await getArticleList(params);
           if (res.code === 1) {
             return {
+              ...res.data,
               success: true,
-              data: res.data.data,
-              total: res.data.total,
             };
           }
 

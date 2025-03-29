@@ -298,6 +298,56 @@ export default [
     ],
   },
   {
+    path: '/mbcrm',
+    name: 'mbcrm',
+    routes: [
+      {
+        path: '/mbcrm',
+        redirect: '/mbcrm/hospital/list',
+      },
+      {
+        path: '/mbcrm/hospital',
+        name: 'hospital',
+        routes: [
+          {
+            path: '/mbcrm/hospital',
+            redirect: '/mbcrm/hospital/list',
+          },
+          {
+            name: 'list',
+            path: '/mbcrm/hospital/list',
+            component: './Mbcrm/hospital',
+          },
+          {
+            name: 'create',
+            path: '/mbcrm/hospital/create',
+            component: './Mbcrm/hospital/save',
+          },
+          {
+            name: 'edit',
+            path: '/mbcrm/hospital/edit/:hospitalId',
+            component: './Mbcrm/hospital/save',
+          },
+        ],
+      },
+      {
+        path: '/mbcrm/customer',
+        name: 'customer',
+        icon: 'customer',
+        routes: [
+          {
+            path: '/mbcrm/customer',
+            redirect: '/mbcrm/customer/list',
+          },
+          {
+            path: '/mbcrm/customer/list',
+            component: './Mbcrm/customer/index',
+          },
+        ],
+      },
+    ],
+  },
+  {
     path: '*',
     layout: false,
     component: './404',
