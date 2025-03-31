@@ -20,8 +20,6 @@ interface Props {
   onOk?: () => void;
 }
 
-const genderLabelArr = ['保密', '男', '女'];
-
 const SaveForm = (props: Props) => {
   const [form] = Form.useForm<API.User>();
   const { message } = App.useApp();
@@ -56,6 +54,7 @@ const SaveForm = (props: Props) => {
       form={form}
       open={open}
       grid={true}
+      readonly={readOnly}
       rowProps={{
         gutter: 16,
       }}
@@ -68,9 +67,12 @@ const SaveForm = (props: Props) => {
       modalProps={{
         destroyOnClose: true,
         onCancel: () => {},
-        className: 'next-modal',
+        className: 'zerocmf-modal',
       }}
       onFinish={async (values) => {
+        if (readOnly) {
+          return true;
+        }
         let res;
         const { userId } = values || {};
         if (userId) {
@@ -90,7 +92,6 @@ const SaveForm = (props: Props) => {
       }}
     >
       <ProFormText
-        fieldProps={{ readOnly }}
         colProps={{ span: 0 }}
         name="userId"
         label="userId"
@@ -98,7 +99,6 @@ const SaveForm = (props: Props) => {
       ></ProFormText>
 
       <ProFormText
-        fieldProps={{ readOnly }}
         name="loginName"
         label="登录账号"
         placeholder={readOnly ? '未填写' : '请输入登录名'}
@@ -106,7 +106,6 @@ const SaveForm = (props: Props) => {
       />
 
       <ProFormText.Password
-        fieldProps={{ readOnly }}
         name="password"
         label="登录密码"
         placeholder={readOnly ? '保密' : '请输入登录密码'}
@@ -114,65 +113,45 @@ const SaveForm = (props: Props) => {
       />
 
       <ProFormText
-        fieldProps={{ readOnly }}
         name="phone"
         label="手机号码"
         placeholder={readOnly ? '未填写' : '请输入手机号码'}
       />
       <ProFormText
-        fieldProps={{ readOnly }}
         name="email"
         label="邮箱"
         placeholder={readOnly ? '未填写' : '请输入邮箱'}
       />
 
       <ProFormText
-        fieldProps={{ readOnly }}
         name="nickname"
         label="用户昵称"
         placeholder={readOnly ? '未填写' : '请输入用户昵称'}
       />
       <ProFormText
-        fieldProps={{ readOnly }}
         name="realname"
         label="真实姓名"
         placeholder={readOnly ? '未填写' : '请输入真实姓名'}
       />
 
-      {readOnly ? (
-        <ProFormText
-          fieldProps={{ readOnly, value: genderLabelArr[initialValues?.gender || 0] }}
-          label="性别"
-          placeholder="未填写"
-        />
-      ) : (
-        <ProFormSelect
-          name="gender"
-          label="性别"
-          options={[
-            { label: '保密', value: 0 },
-            { label: '男', value: 1 },
-            { label: '女', value: 2 },
-          ]}
-        />
-      )}
+      <ProFormSelect
+        name="gender"
+        label="性别"
+        options={[
+          { label: '保密', value: 0 },
+          { label: '男', value: 1 },
+          { label: '女', value: 2 },
+        ]}
+      />
 
-      {readOnly ? (
-        <ProFormText
-          fieldProps={{ readOnly, value: initialValues?.status === 1 ? '启用' : '禁用' }}
-          label="状态"
-          placeholder="未填写"
-        />
-      ) : (
-        <ProFormRadio.Group
-          name="status"
-          label="状态"
-          options={[
-            { label: '启用', value: 1 },
-            { label: '禁用', value: 0 },
-          ]}
-        />
-      )}
+      <ProFormRadio.Group
+        name="status"
+        label="状态"
+        options={[
+          { label: '启用', value: 1 },
+          { label: '禁用', value: 0 },
+        ]}
+      />
 
       <ProFormUploadButton
         colProps={{ span: 24 }}
@@ -200,9 +179,6 @@ const SaveForm = (props: Props) => {
       />
 
       <ProFormTextArea
-        fieldProps={{
-          readOnly,
-        }}
         colProps={{ span: 24 }}
         name="remark"
         label="备注"

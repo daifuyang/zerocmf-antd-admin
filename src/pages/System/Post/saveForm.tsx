@@ -1,5 +1,11 @@
 import { createPost, getPost, updatePost } from '@/services/ant-design-pro/posts';
-import { ModalForm, ProFormDigit, ProFormRadio, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
+import {
+  ModalForm,
+  ProFormDigit,
+  ProFormRadio,
+  ProFormText,
+  ProFormTextArea,
+} from '@ant-design/pro-components';
 import { App, Form } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -49,8 +55,10 @@ const SaveForm = (props: Props) => {
       onOpenChange={(open) => setOpen(open)}
       autoFocusFirstInput
       width={520}
+      readonly={readOnly}
       initialValues={initialValues}
       modalProps={{
+        className: 'zerocmf-modal',
         centered: true,
         destroyOnClose: true,
         onCancel: () => {},

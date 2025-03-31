@@ -96,7 +96,7 @@ const MenuForm = (props: Props) => {
   const fetchMenus = useCallback(async (params: API.getMenusParams) => {
     const res = await getMenus(params);
     if (res.code === 1) {
-      const options = res.data;
+      const options = res.data as API.Menu[];
       return [
         {
           menuName: '顶级菜单',
@@ -159,6 +159,7 @@ const MenuForm = (props: Props) => {
       form={form}
       open={open}
       grid={true}
+      readonly={readOnly}
       rowProps={{
         gutter: 16,
       }}
@@ -170,7 +171,7 @@ const MenuForm = (props: Props) => {
       modalProps={{
         destroyOnClose: true,
         onCancel: () => {},
-        className: 'next-modal',
+        className: 'zerocmf-modal',
       }}
       onFinish={async (values) => {
         let res;
@@ -193,55 +194,32 @@ const MenuForm = (props: Props) => {
     >
       <ProFormText colProps={{ span: 0 }} name="menuId" label="id" hidden />
 
-      {readOnly ? (
-        <ProFormText
-          colProps={{
-            span: 24,
-          }}
-          label="上级菜单"
-          fieldProps={{
-            readOnly,
-            value: menuMap?.get(initialValues.parentId)?.menuName,
-          }}
-        />
-      ) : (
-        <ProFormTreeSelect
-          name="parentId"
-          label="上级菜单"
-          colProps={{
-            span: 24,
-          }}
-          initialValue={0}
-          request={fetchMenus}
-          placeholder="请选择上级菜单"
-          fieldProps={{
-            fieldNames: {
-              label: 'menuName',
-              value: 'menuId',
-            },
-          }}
-        />
-      )}
+      <ProFormTreeSelect
+        name="parentId"
+        label="上级菜单"
+        colProps={{
+          span: 24,
+        }}
+        initialValue={0}
+        request={fetchMenus}
+        placeholder="请选择上级菜单"
+        fieldProps={{
+          fieldNames: {
+            label: 'menuName',
+            value: 'menuId',
+          },
+        }}
+      />
 
-      {readOnly ? (
-        <ProFormText
-          label="菜单类型"
-          fieldProps={{
-            readOnly,
-            value: menuTypeOptions[initialValues.menuType],
-          }}
-        />
-      ) : (
-        <ProFormRadio.Group
-          name="menuType"
-          label="菜单类型"
-          options={[
-            { label: '目录', value: 0 },
-            { label: '菜单', value: 1 },
-            { label: '按钮', value: 2 },
-          ]}
-        />
-      )}
+      <ProFormRadio.Group
+        name="menuType"
+        label="菜单类型"
+        options={[
+          { label: '目录', value: 0 },
+          { label: '菜单', value: 1 },
+          { label: '按钮', value: 2 },
+        ]}
+      />
 
       <ProFormDependency name={['menuType']}>
         {({ menuType }) => {
@@ -254,31 +232,23 @@ const MenuForm = (props: Props) => {
                   span: 24,
                 }}
                 placeholder={readOnly ? '未填写' : '请输入菜单图标'}
-                fieldProps={{
-                  readOnly,
-                }}
               />
             );
           }
         }}
       </ProFormDependency>
+
       <ProFormText
         name="menuName"
         label="菜单名称"
         placeholder={readOnly ? '未填写' : '请输入菜单名称'}
         rules={[{ required: true, message: '请输入菜单名称' }]}
-        fieldProps={{
-          readOnly,
-        }}
       />
 
       <ProFormDigit
         name="sortOrder"
         label="显示排序"
         placeholder={readOnly ? '未填写' : '请输入显示排序'}
-        fieldProps={{
-          readOnly,
-        }}
       />
 
       <ProFormDependency name={['menuType']}>
@@ -286,32 +256,17 @@ const MenuForm = (props: Props) => {
           if (menuType !== 1) {
             return (
               <>
-                {readOnly ? (
-                  <ProFormText
-                    label="是否外链"
-                    fieldProps={{
-                      readOnly,
-                      value: initialValues.isFrame === 1 ? '是' : '否',
-                    }}
-                  />
-                ) : (
-                  <ProFormRadio.Group
-                    name="isFrame"
-                    label="是否外链"
-                    options={[
-                      { label: '是', value: 1 },
-                      { label: '否', value: 0 },
-                    ]}
-                    rules={[{ required: true, message: '请选择是否外链' }]}
-                  />
-                )}
-
-                <ProFormText
-                  name="path"
-                  label="路由地址"
-                  placeholder="请输入路由地址"
-                  fieldProps={{ readOnly }}
+                <ProFormRadio.Group
+                  name="isFrame"
+                  label="是否外链"
+                  options={[
+                    { label: '是', value: 1 },
+                    { label: '否', value: 0 },
+                  ]}
+                  rules={[{ required: true, message: '请选择是否外链' }]}
                 />
+
+                <ProFormText name="path" label="路由地址" placeholder="请输入路由地址" />
               </>
             );
           }
@@ -321,14 +276,7 @@ const MenuForm = (props: Props) => {
       <ProFormDependency name={['menuType']}>
         {({ menuType }) => {
           if (menuType === 2) {
-            return (
-              <ProFormText
-                name="component"
-                label="组件路径"
-                placeholder="请输入组件路径"
-                fieldProps={{ readOnly }}
-              />
-            );
+            return <ProFormText name="component" label="组件路径" placeholder="请输入组件路径" />;
           }
         }}
       </ProFormDependency>
@@ -336,14 +284,7 @@ const MenuForm = (props: Props) => {
       <ProFormDependency name={['menuType']}>
         {({ menuType }) => {
           if (menuType !== 0) {
-            return (
-              <ProFormText
-                name="perms"
-                label="权限字符"
-                placeholder="请输入权限字符"
-                fieldProps={{ readOnly }}
-              />
-            );
+            return <ProFormText name="perms" label="权限字符" placeholder="请输入权限字符" />;
           }
         }}
       </ProFormDependency>
@@ -353,56 +294,31 @@ const MenuForm = (props: Props) => {
           if (menuType === 2) {
             return (
               <>
-                <ProFormText
-                  name="query"
-                  label="路由参数"
-                  placeholder="请输入路由参数"
-                  fieldProps={{ readOnly }}
+                <ProFormText name="query" label="路由参数" placeholder="请输入路由参数" />
+                <ProFormRadio.Group
+                  name="isCache"
+                  label="是否缓存"
+                  options={[
+                    { label: '是', value: 1 },
+                    { label: '否', value: 0 },
+                  ]}
+                  rules={[{ required: true, message: '请选择是否缓存' }]}
                 />
-                {readOnly ? (
-                  <ProFormText
-                    label="是否缓存"
-                    fieldProps={{
-                      readOnly,
-                      value: initialValues.isCache === 1 ? '是' : '否',
-                    }}
-                  />
-                ) : (
-                  <ProFormRadio.Group
-                    name="isCache"
-                    label="是否缓存"
-                    options={[
-                      { label: '是', value: 1 },
-                      { label: '否', value: 0 },
-                    ]}
-                    rules={[{ required: true, message: '请选择是否缓存' }]}
-                  />
-                )}
               </>
             );
           }
         }}
       </ProFormDependency>
 
-      {readOnly ? (
-        <ProFormText
-          label="菜单状态"
-          fieldProps={{
-            readOnly,
-            value: initialValues.visible === 1 ? '显示' : '隐藏',
-          }}
-        />
-      ) : (
-        <ProFormRadio.Group
-          name="visible"
-          label="显示状态"
-          options={[
-            { label: '显示', value: 1 },
-            { label: '隐藏', value: 0 },
-          ]}
-          rules={[{ required: true, message: '请选择显示状态' }]}
-        />
-      )}
+      <ProFormRadio.Group
+        name="visible"
+        label="显示状态"
+        options={[
+          { label: '显示', value: 1 },
+          { label: '隐藏', value: 0 },
+        ]}
+        rules={[{ required: true, message: '请选择显示状态' }]}
+      />
 
       <ProFormDependency name={['menuType']}>
         {({ menuType }) => {

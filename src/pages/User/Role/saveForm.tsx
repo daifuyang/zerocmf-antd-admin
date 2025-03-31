@@ -98,24 +98,25 @@ const SaveForm = (props: Props) => {
       trigger={children}
       form={form}
       open={open}
+      readonly={readOnly}
       onOpenChange={(open) => setOpen(open)}
       autoFocusFirstInput
       width={520}
       initialValues={initialValues}
       modalProps={{
         centered: true,
+        className: 'zerocmf-modal',
         destroyOnClose: true,
         onCancel: () => {
           init();
         },
       }}
       onFinish={async (values) => {
-        const menuIds = treeCheckedKeys?.checked || treeCheckedKeys || [];
-        values.menuIds = menuIds;
         if (readOnly) {
           return true;
         }
-
+        const menuIds = treeCheckedKeys?.checked || treeCheckedKeys || [];
+        values.menuIds = menuIds;
         let res;
         const { roleId } = values || {};
         if (roleId) {
@@ -136,50 +137,30 @@ const SaveForm = (props: Props) => {
       }}
     >
       <ProFormText name="roleId" label="roleId" hidden></ProFormText>
-      <ProFormText
-        name="name"
-        label="角色名称"
-        placeholder="请输入角色名称"
-        fieldProps={{ readOnly }}
-      />
-      <ProFormText
-        name="description"
-        label="角色描述"
-        placeholder="请输入角色描述"
-        fieldProps={{ readOnly }}
-      />
+      <ProFormText name="name" label="角色名称" placeholder="请输入角色名称" />
+      <ProFormText name="description" label="角色描述" placeholder="请输入角色描述" />
       <ProFormDigit
         name="sortOrder"
         label="排序"
-        fieldProps={{ precision: 0, readOnly }}
+        fieldProps={{ precision: 0 }}
         placeholder="请输入排序"
       />
 
-      {readOnly ? (
-        <ProFormText
-          label="状态"
-          fieldProps={{
-            readOnly: true,
-            value: initialValues?.status === 1 ? '启用' : '禁用',
-          }}
-        />
-      ) : (
-        <ProFormRadio.Group
-          name="status"
-          label="状态"
-          initialValue={1}
-          options={[
-            {
-              label: '启用',
-              value: 1,
-            },
-            {
-              label: '禁用',
-              value: 0,
-            },
-          ]}
-        />
-      )}
+      <ProFormRadio.Group
+        name="status"
+        label="状态"
+        initialValue={1}
+        options={[
+          {
+            label: '启用',
+            value: 1,
+          },
+          {
+            label: '禁用',
+            value: 0,
+          },
+        ]}
+      />
 
       <ProForm.Item label="菜单权限">
         <div style={{ marginBottom: 10 }}>
@@ -197,34 +178,38 @@ const SaveForm = (props: Props) => {
               </Checkbox>
             </Col>
             <Col span={8}>
-              <Checkbox
-                onChange={(e) => {
-                  const { checked } = e.target;
-                  setCheckAllOpen(checked);
-                  setTreeCheckedKeys(checked ? defaultKeys : []);
-                }}
-                checked={checkAllOpen}
-              >
-                全选/取消
-              </Checkbox>
+              {!readOnly && (
+                <Checkbox
+                  onChange={(e) => {
+                    const { checked } = e.target;
+                    setCheckAllOpen(checked);
+                    setTreeCheckedKeys(checked ? defaultKeys : []);
+                  }}
+                  checked={checkAllOpen}
+                >
+                  全选/取消
+                </Checkbox>
+              )}
             </Col>
             <Col span={8}>
-              <Checkbox
-                onChange={(e) => {
-                  const { checked } = e.target;
-                  setCheckStrictlyOpen(checked);
-                }}
-                checked={checkStrictlyOpen}
-              >
-                父子联动
-              </Checkbox>
+              {!readOnly && (
+                <Checkbox
+                  onChange={(e) => {
+                    const { checked } = e.target;
+                    setCheckStrictlyOpen(checked);
+                  }}
+                  checked={checkStrictlyOpen}
+                >
+                  父子联动
+                </Checkbox>
+              )}
             </Col>
           </Row>
         </div>
 
         <Tree
-          height={260}
           checkable
+          disabled={readOnly}
           checkStrictly={!checkStrictlyOpen}
           expandedKeys={expandedKeys}
           checkedKeys={treeCheckedKeys}
