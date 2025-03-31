@@ -20,7 +20,7 @@ declare namespace API {
 
   type Article = {
     /** 文章ID */
-    articleId?: number;
+    articleId: number;
     /** 发布格式 */
     postFormat?: number;
     /** SEO标题 */
@@ -60,7 +60,7 @@ declare namespace API {
     /** 排序权重 */
     order?: number;
     /** 发布时间，Unix时间戳格式 */
-    publishedAt?: number;
+    publishedAt: number;
     /** 创建者ID */
     createId?: number;
     /** 创建者名称 */

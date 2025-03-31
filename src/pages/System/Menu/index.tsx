@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, Divider, Dropdown, Popconfirm, Space, Tag, Tooltip, message } from 'antd';
+import { Button, Divider, Popconfirm, Space, Tag, Tooltip, message } from 'antd';
 import { useRef } from 'react';
 import SaveForm from './saveForm';
 import { deleteMenu, getMenus } from '@/services/ant-design-pro/menus';
@@ -102,9 +102,9 @@ export default () => {
                 }
               }}
             >
-              <a style={{ color: '#ff4d4f' }} key="delete">
+              <Button type="link" danger size="small" key="delete">
                 删除
-              </a>
+              </Button>
             </Popconfirm>
             <SaveForm title="查看菜单" initialValues={record} readOnly>
               <a key="view">查看</a>

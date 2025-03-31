@@ -15,7 +15,7 @@ import {
 } from 'antd';
 import CategoryForm from './CategoryForm';
 
-import { getMedias, deleteMedia } from '@/services/ant-design-pro/medias';
+import { getMedias, deleteMedia, updateMedia } from '@/services/ant-design-pro/medias';
 import {
   CloseOutlined,
   CustomerServiceTwoTone,
@@ -160,6 +160,8 @@ const Media = (props: Props) => {
     name: '',
     parentId: 0,
   });
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState('');
 
   // 分页current
   const [pageCurrent, setPageCurrent] = useState(1);
@@ -421,51 +423,113 @@ const Media = (props: Props) => {
                 <List.Item>
                   <Card
                     cover={<Cover type={type} item={item} />}
-                    className="media-thumbnail"
-                    hoverable={true}
+                    className={`media-thumbnail ${editingId === item.mediaId ? 'editing' : ''}`}
+                    hoverable={editingId !== item.mediaId}
                   >
-                    <div className="title">{item.remarkName}</div>
-                    <div className="action">
-                      <div className="action-item">
-                        <Tooltip title="预览">
-                          <EyeOutlined
-                            onClick={() => {
-                              if (type === 0) {
-                                setPrevPath(item.prevPath);
-                                return;
-                              }
-
-                              if (type === 3) {
-                                window.open(item.prevPath);
-                                return;
-                              }
-
-                              MediaModal.open({
-                                item,
-                                type,
-                              });
-                            }}
-                          />
-                        </Tooltip>
-                      </div>
-                      <div className="action-item">
-                        <Tooltip title="编辑">
-                          <EditOutlined />
-                        </Tooltip>
-                      </div>
-                      <div className="action-item">
-                        <Tooltip title="删除">
-                          <Popconfirm
-                            title="确定删除吗?"
-                            onConfirm={(e) => deleteItem(e, item.mediaId)}
-                            okText="确定"
-                            cancelText="取消"
-                          >
-                            <DeleteOutlined />
-                          </Popconfirm>
-                        </Tooltip>
-                      </div>
+                    <div className="title">
+                      {editingId === item.mediaId ? (
+                        <Input
+                          autoFocus
+                          allowClear
+                          value={editingValue}
+                          onChange={(e) => setEditingValue(e.target.value)}
+                          onBlur={() => {
+                            if (!editingValue.trim()) {
+                              // 如果输入为空，取消修改
+                              setEditingId(null);
+                              return;
+                            }
+                            
+                            if (editingValue.trim() !== item.remarkName) {
+                              updateMedia(
+                                { mediaId: item.mediaId },
+                                { remarkName: editingValue.trim() }
+                              )
+                                .then(res => {
+                                  if (res.code === 1) {
+                                    message.success(res.msg);
+                                    getData({ current: pageCurrent });
+                                  } else {
+                                    message.error(res.msg);
+                                    setEditingValue(item.remarkName);
+                                  }
+                                })
+                                .catch(() => {
+                                  setEditingValue(item.remarkName);
+                                })
+                                .finally(() => {
+                                  setEditingId(null);
+                                });
+                            } else {
+                              setEditingId(null);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              (e.target as HTMLInputElement).blur();
+                            }
+                            if (e.key === 'Escape') {
+                              setEditingId(null);
+                            }
+                          }}
+                          size="small"
+                          style={{ width: '100%' }}
+                        />
+                      ) : (
+                        item.remarkName
+                      )}
                     </div>
+                    {editingId !== item.mediaId && (
+                      <div className="action">
+                        <div className="action-item">
+                          <Tooltip title="预览">
+                            <EyeOutlined
+                              onClick={() => {
+                                if (type === 0) {
+                                  setPrevPath(item.prevPath);
+                                  return;
+                                }
+
+                                if (type === 3) {
+                                  window.open(item.prevPath);
+                                  return;
+                                }
+
+                                MediaModal.open({
+                                  item,
+                                  type,
+                                });
+                              }}
+                            />
+                          </Tooltip>
+                        </div>
+                        <div className="action-item">
+                          <Tooltip title="编辑">
+                            <EditOutlined 
+                              onClick={() => {
+                                setEditingId(item.mediaId);
+                                setEditingValue(item.remarkName);
+                              }}
+                            />
+                          </Tooltip>
+                        </div>
+                        <div className="action-item">
+                          <Tooltip title="删除">
+                            <Popconfirm
+                              title="确定删除吗?"
+                              onConfirm={(e) => deleteItem(e, item.mediaId)}
+                              okText="确定"
+                              cancelText="取消"
+                              okButtonProps={{
+                                danger: true,
+                              }}
+                            >
+                              <DeleteOutlined />
+                            </Popconfirm>
+                          </Tooltip>
+                        </div>
+                      </div>
+                    )}
                   </Card>
                 </List.Item>
               );
