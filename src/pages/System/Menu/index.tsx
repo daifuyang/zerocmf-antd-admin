@@ -74,12 +74,15 @@ export default () => {
     },
     {
       title: '操作',
-      width: 180,
+      width: 200,
       valueType: 'option',
       key: 'option',
       render: (text, record) => {
         return (
           <Space split={<Divider type="vertical" />}>
+            <SaveForm title="查看菜单" initialValues={record} readOnly>
+              <a key="view">查看</a>
+            </SaveForm>
             <SaveForm title="编辑菜单" key="editable" initialValues={record}>
               <a>编辑</a>
             </SaveForm>
@@ -106,9 +109,6 @@ export default () => {
                 删除
               </Button>
             </Popconfirm>
-            <SaveForm title="查看菜单" initialValues={record} readOnly>
-              <a key="view">查看</a>
-            </SaveForm>
           </Space>
         );
       },
