@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { downloadFromUrl } from '@/utils/download';
+import './index.less';
 import { createRoot } from 'react-dom/client';
 import {
   Button,
@@ -12,7 +14,19 @@ import {
   Tree,
   Input,
   Space,
+  Dropdown,
+  Checkbox,
+  Modal,
 } from 'antd';
+import type { DataNode } from 'antd/es/tree';
+type MediaCategoryTreeNode = DataNode & {
+  key: React.Key;
+  title: string;
+  name: string;
+  categoryId?: number;
+  parentId?: number;
+  children?: MediaCategoryTreeNode[];
+};
 import CategoryForm from './CategoryForm';
 
 import { getMedias, deleteMedia, updateMedia } from '@/services/ant-design-pro/medias';
@@ -20,9 +34,12 @@ import {
   CloseOutlined,
   CustomerServiceTwoTone,
   DeleteOutlined,
+  DownloadOutlined,
   EditOutlined,
+  EllipsisOutlined,
   EyeOutlined,
   FileTwoTone,
+  FolderOutlined,
   SearchOutlined,
   VideoCameraTwoTone,
   PlusOutlined,
@@ -150,7 +167,7 @@ const Media = (props: Props) => {
   const [total, setTotal] = useState(0);
   const [data, setData] = useState([]);
   const [prevPath, setPrevPath] = useState('');
-  const [mediaCategories, setMediaCategories] = useState<API.MediaCategory[]>([]); // 新增状态：存储媒体分类数据
+  const [mediaCategories, setMediaCategories] = useState<MediaCategoryTreeNode[]>([]); // 新增状态：存储媒体分类数据
   const [categoryId, setCategoryId] = useState<number | bigint | string>(0);
   const [categoryFormVisible, setCategoryFormVisible] = useState(false); // 控制分类表单弹窗的显示
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
@@ -162,6 +179,10 @@ const Media = (props: Props) => {
   });
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState('');
+  const [moveModalVisible, setMoveModalVisible] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState<any>(null);
+  const [searchValue, setSearchValue] = useState('');
+  const [targetCategoryId, setTargetCategoryId] = useState<number | bigint | string>(0);
 
   // 分页current
   const [pageCurrent, setPageCurrent] = useState(1);
@@ -208,9 +229,38 @@ const Media = (props: Props) => {
   const fetchMediaCategories = async () => {
     const result = await getMediaCategoryTree({});
     if (result.code === 1) {
-      const categoriesData = [
-        { name: '全部', categoryId: 0 },
-        ...(Array.isArray(result.data) ? result.data : []),
+      const categoriesData: MediaCategoryTreeNode[] = [
+        { 
+          key: 0,
+          title: '全部',
+          name: '全部',
+          categoryId: 0,
+          isLeaf: false
+        },
+        ...(Array.isArray(result.data) ? result.data.map(cat => ({
+          key: cat.categoryId || 0,
+          title: cat.name || '',
+          name: cat.name || '',
+          categoryId: cat.categoryId,
+          parentId: cat.parentId,
+          isLeaf: !cat.children?.length,
+          children: cat.children?.map(child => ({
+            key: child.categoryId || 0,
+            title: child.name || '',
+            name: child.name || '',
+            categoryId: child.categoryId,
+            parentId: child.parentId,
+            isLeaf: !child.children?.length,
+            children: child.children?.map(grandchild => ({
+              key: grandchild.categoryId || 0,
+              title: grandchild.name || '',
+              name: grandchild.name || '',
+              categoryId: grandchild.categoryId,
+              parentId: grandchild.parentId,
+              isLeaf: true
+            }))
+          }))
+        })) : []),
       ];
       setMediaCategories(categoriesData);
 
@@ -245,10 +295,12 @@ const Media = (props: Props) => {
 
   // 删除单项
   const deleteItem = async (
-    e: React.MouseEvent<HTMLElement, MouseEvent> | undefined,
+    e: React.MouseEvent<HTMLElement, MouseEvent> | React.KeyboardEvent<HTMLElement> | undefined,
     mediaId: number,
   ) => {
-    e?.stopPropagation();
+    if (e && 'stopPropagation' in e) {
+      e.stopPropagation();
+    }
     setLoading(true);
     const result = await deleteMedia({
       mediaId,
@@ -333,48 +385,68 @@ const Media = (props: Props) => {
                 <div className="tree-node-wrapper">
                   <span className="tree-node-title">{node.name}</span>
 
-                  {nodeKey > 0 && (
-                    <div className="tree-node-actions" onClick={(e) => e.stopPropagation()}>
-                      <Space size={4}>
-                        <Tooltip title="添加子分类">
-                          <PlusOutlined
-                            onClick={() => {
+                  {nodeKey !== 0 && (
+                    <Dropdown
+                      menu={{
+                        items: [
+                          {
+                            key: 'add-child',
+                            label: '添加子分类',
+                            icon: <PlusOutlined />,
+                            onClick: (e) => {
+                              e.domEvent.stopPropagation();
                               setCurrentCategory({
                                 categoryId: undefined,
                                 name: '',
                                 parentId: nodeKey,
                               });
                               setCategoryFormVisible(true);
-                            }}
-                            style={{ cursor: 'pointer' }}
-                          />
-                        </Tooltip>
-                        <Tooltip title="编辑">
-                          <EditOutlined
-                            onClick={() => {
+                            }
+                          },
+                          {
+                            key: 'rename',
+                            label: '重命名',
+                            icon: <EditOutlined />,
+                            onClick: (e) => {
+                              e.domEvent.stopPropagation();
                               setCurrentCategory({
                                 categoryId: nodeKey,
                                 parentId: node.parentId,
                                 name: node.name,
                               });
                               setCategoryFormVisible(true);
-                            }}
-                            style={{ cursor: 'pointer' }}
-                          />
-                        </Tooltip>
-                        <Tooltip title="删除">
-                          <Popconfirm
-                            title="确定删除该分类吗?"
-                            onConfirm={() => handleDeleteCategory(nodeKey)}
-                            okText="确定"
-                            cancelText="取消"
-                            placement="topRight"
-                          >
-                            <DeleteOutlined style={{ cursor: 'pointer', color: '#ff4d4f' }} />
-                          </Popconfirm>
-                        </Tooltip>
-                      </Space>
-                    </div>
+                            }
+                          },
+                          {
+                            key: 'delete',
+                            label: (
+                              <Popconfirm
+                                title="确定删除该分类吗?"
+                                onConfirm={(e) => {
+                                  e?.stopPropagation();
+                                  handleDeleteCategory(nodeKey);
+                                }}
+                                okText="确定"
+                                cancelText="取消"
+                              >
+                                <span onClick={(e) => e.stopPropagation()}>删除分类</span>
+                              </Popconfirm>
+                            ),
+                            icon: <DeleteOutlined style={{ color: '#ff4d4f' }} />,
+                            danger: true
+                          }
+                        ]
+                      }}
+                      trigger={['click']}
+                      placement="bottomRight"
+                    >
+                      <Button 
+                        type="text" 
+                        size="small" 
+                        icon={<EllipsisOutlined />}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </Dropdown>
                   )}
                 </div>
               );
@@ -422,7 +494,94 @@ const Media = (props: Props) => {
               return (
                 <List.Item>
                   <Card
-                    cover={<Cover type={type} item={item} />}
+                    cover={
+                      <div className="media-card-cover">
+                        <Cover type={type} item={item} />
+                        <div className="media-card-actions">
+                          <Checkbox className="media-card-checkbox" />
+                          <Dropdown
+                            menu={{
+                              items: [
+                                {
+                                  key: 'download',
+                                  label: '下载',
+                                  icon: <DownloadOutlined />,
+                                  onClick: async () => {
+                                    await downloadFromUrl(item.prevPath, item.remarkName);
+                                  },
+                                },
+                                {
+                                  key: 'preview',
+                                  label: '预览',
+                                  icon: <EyeOutlined />,
+                                  onClick: () => {
+                                    if (type === 0) {
+                                      setPrevPath(item.prevPath);
+                                      return;
+                                    }
+                                    if (type === 3) {
+                                      window.open(item.prevPath);
+                                      return;
+                                    }
+                                    MediaModal.open({ item, type });
+                                  },
+                                },
+                                {
+                                  key: 'move',
+                                  label: '移动',
+                                  icon: <FolderOutlined />,
+                                  onClick: (e) => {
+                                    e.domEvent.stopPropagation();
+                                    setSelectedMedia(item);
+                                    setMoveModalVisible(true);
+                                  },
+                                },
+                                {
+                                  key: 'rename',
+                                  label: '重命名',
+                                  icon: <EditOutlined />,
+                                  onClick: () => {
+                                    setEditingId(item.mediaId);
+                                    setEditingValue(item.remarkName);
+                                  },
+                                },
+                                {
+                                  key: 'delete',
+                                  label: (
+                                    <Popconfirm
+                                      title="确定要删除这个文件吗？"
+                                      onConfirm={(e) => {
+                                        if (e) e.stopPropagation();
+                                        deleteItem(undefined, item.mediaId);
+                                      }}
+                                      okText="确定"
+                                      cancelText="取消"
+                                      placement="topRight"
+                                    >
+                                      <div onClick={(e) => e.stopPropagation()}>
+                                        删除
+                                      </div>
+                                    </Popconfirm>
+                                  ),
+                                  icon: <DeleteOutlined />,
+                                  danger: true,
+                                },
+                              ],
+                            }}
+                            trigger={['click']}
+                            placement="bottomLeft"
+                          >
+                            <Button 
+                              type="text" 
+                              className="media-card-more"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <EllipsisOutlined style={{ fontSize: '16px' }} />
+                            </Button>
+                          </Dropdown>
+                        </div>
+                      </div>
+                    }
                     className={`media-thumbnail ${editingId === item.mediaId ? 'editing' : ''}`}
                     hoverable={editingId !== item.mediaId}
                   >
@@ -480,55 +639,15 @@ const Media = (props: Props) => {
                       )}
                     </div>
                     {editingId !== item.mediaId && (
-                      <div className="action">
-                        <div className="action-item">
-                          <Tooltip title="预览">
-                            <EyeOutlined
-                              onClick={() => {
-                                if (type === 0) {
-                                  setPrevPath(item.prevPath);
-                                  return;
-                                }
-
-                                if (type === 3) {
-                                  window.open(item.prevPath);
-                                  return;
-                                }
-
-                                MediaModal.open({
-                                  item,
-                                  type,
-                                });
-                              }}
-                            />
-                          </Tooltip>
-                        </div>
-                        <div className="action-item">
-                          <Tooltip title="编辑">
-                            <EditOutlined 
-                              onClick={() => {
-                                setEditingId(item.mediaId);
-                                setEditingValue(item.remarkName);
-                              }}
-                            />
-                          </Tooltip>
-                        </div>
-                        <div className="action-item">
-                          <Tooltip title="删除">
-                            <Popconfirm
-                              title="确定删除吗?"
-                              onConfirm={(e) => deleteItem(e, item.mediaId)}
-                              okText="确定"
-                              cancelText="取消"
-                              okButtonProps={{
-                                danger: true,
-                              }}
-                            >
-                              <DeleteOutlined />
-                            </Popconfirm>
-                          </Tooltip>
-                        </div>
-                      </div>
+                      <Tooltip title="编辑文件名">
+                        <EditOutlined 
+                          className="title-edit"
+                          onClick={() => {
+                            setEditingId(item.mediaId);
+                            setEditingValue(item.remarkName);
+                          }}
+                        />
+                      </Tooltip>
                     )}
                   </Card>
                 </List.Item>
@@ -537,6 +656,91 @@ const Media = (props: Props) => {
           />
         </div>
       </div>
+
+      {/* 移动资源弹窗 */}
+      <Modal
+        title={`移动${title[type]} ${selectedMedia?.remarkName || ''}`}
+        open={moveModalVisible}
+        onCancel={() => setMoveModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setMoveModalVisible(false)}>
+            取消
+          </Button>,
+          <Button 
+            key="move" 
+            type="primary" 
+            onClick={async () => {
+              if (selectedMedia && targetCategoryId) {
+                try {
+                  const result = await updateMedia(
+                    { mediaId: selectedMedia.mediaId },
+                    { 
+                      ...selectedMedia,
+                      categoryId: Number(targetCategoryId) 
+                    },
+                    {}
+                  );
+                  if (result.code === 1) {
+                    message.success('移动成功');
+                    getData({ current: pageCurrent });
+                    setMoveModalVisible(false);
+                  } else {
+                    message.error(result.msg || '移动失败');
+                  }
+                } catch (error) {
+                  message.error('移动失败');
+                }
+              }
+            }}
+          >
+            确定移动
+          </Button>
+        ]}
+      >
+        <div style={{ marginBottom: 16 }}>
+          <Input.Search 
+            placeholder="搜索分类" 
+            allowClear
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+          />
+        </div>
+        <Tree
+          treeData={mediaCategories
+            .filter(cat => 
+              (cat.name && cat.name.toLowerCase().includes(searchValue.toLowerCase())) ||
+              cat.categoryId === 0 // 总是显示"全部"分类
+            )
+            .map(cat => ({
+              key: cat.key,
+              title: cat.title,
+              children: cat.children?.map(child => ({
+                key: child.key,
+                title: child.title,
+                children: child.children?.map(grandchild => ({
+                  key: grandchild.key,
+                  title: grandchild.title,
+                  isLeaf: true
+                })),
+                isLeaf: !child.children?.length
+              })),
+              isLeaf: !cat.children?.length
+            }))}
+          selectedKeys={[targetCategoryId]}
+          onSelect={(selectedKeys) => {
+            if (selectedKeys.length > 0) {
+              setTargetCategoryId(selectedKeys[0]);
+            }
+          }}
+          showIcon
+          blockNode
+          fieldNames={{
+            title: 'name',
+            key: 'categoryId',
+            children: 'children',
+          }}
+        />
+      </Modal>
     </>
   );
 };
