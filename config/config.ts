@@ -5,6 +5,8 @@ import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
 
+import { publicPath } from '../src/utils/constant';
+
 const { REACT_APP_ENV = 'dev' } = process.env;
 
 export default defineConfig({
@@ -127,7 +129,7 @@ export default defineConfig({
    */
   headScripts: [
     // 解决首次加载时白屏的问题
-    { src: '/scripts/loading.js', async: true },
+    { src: publicPath + 'scripts/loading.js', async: true },
   ],
   //================ pro 插件配置 =================
   presets: ['umi-presets-pro'],
@@ -158,5 +160,6 @@ export default defineConfig({
   },
   esbuildMinifyIIFE: true,
   requestRecord: {},
-  publicPath: "/"
+  base: publicPath,
+  publicPath,
 });

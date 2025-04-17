@@ -1,6 +1,12 @@
 import { createDept, getDept, updateDept, getDeptTree } from '@/services/ant-design-pro/depts';
 
-import { ModalForm, ProFormDigit, ProFormRadio, ProFormText, ProFormTreeSelect } from '@ant-design/pro-components';
+import {
+  ModalForm,
+  ProFormDigit,
+  ProFormRadio,
+  ProFormText,
+  ProFormTreeSelect,
+} from '@ant-design/pro-components';
 import { App, Form } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -15,7 +21,13 @@ declare interface Props {
 const SaveForm = (props: Props) => {
   const [form] = Form.useForm<API.Dept>();
   const { message } = App.useApp();
-  const { title, children, initialValues = { status: 1, parentId: 0 }, readOnly = false, onOk } = props;
+  const {
+    title,
+    children,
+    initialValues = { status: 1, parentId: 0 },
+    readOnly = false,
+    onOk,
+  } = props;
 
   const [open, setOpen] = useState(false);
 
@@ -82,8 +94,10 @@ const SaveForm = (props: Props) => {
       onOpenChange={(open) => setOpen(open)}
       autoFocusFirstInput
       width={520}
+      readonly={readOnly}
       initialValues={initialValues}
       modalProps={{
+        className: 'zerocmf-modal',
         centered: true,
         destroyOnClose: true,
         onCancel: () => {},
@@ -92,7 +106,6 @@ const SaveForm = (props: Props) => {
         if (readOnly) {
           return true;
         }
-
         let res;
         const { deptId } = values;
         if (deptId) {
@@ -113,38 +126,25 @@ const SaveForm = (props: Props) => {
     >
       <ProFormText name="deptId" label="deptId" hidden />
 
-      {readOnly ? (
-        <ProFormText
-          label="上级部门"
-          fieldProps={{
-            readOnly: true,
-            value: initialValues?.parentId === 0 ? '顶级部门' : initialValues?.parentName,
-          }}
-        />
-      ) : (
-        <ProFormTreeSelect
-          name="parentId"
-          label="上级部门"
-          request={fetchDeptTree}
-          placeholder="请选择上级部门"
-          fieldProps={{
-            fieldNames: {
-              label: 'deptName',
-              value: 'deptId',
-            },
-          }}
-          rules={[{ required: true, message: '请选择上级部门' }]}
-        />
-      )}
+      <ProFormTreeSelect
+        name="parentId"
+        label="上级部门"
+        request={fetchDeptTree}
+        placeholder="请选择上级部门"
+        fieldProps={{
+          fieldNames: {
+            label: 'deptName',
+            value: 'deptId',
+          },
+        }}
+        rules={[{ required: true, message: '请选择上级部门' }]}
+      />
 
       <ProFormText
         name="deptName"
         label="部门名称"
         placeholder={readOnly ? '未填写' : '请输入部门名称'}
         rules={[{ required: true, message: '请输入部门名称' }]}
-        fieldProps={{
-          readOnly,
-        }}
       />
 
       <ProFormDigit
@@ -152,7 +152,6 @@ const SaveForm = (props: Props) => {
         label="显示排序"
         placeholder={readOnly ? '未填写' : '请输入显示排序'}
         fieldProps={{
-          readOnly,
           precision: 0,
         }}
         rules={[{ required: true, message: '请输入显示排序' }]}
@@ -162,54 +161,31 @@ const SaveForm = (props: Props) => {
         name="leader"
         label="负责人"
         placeholder={readOnly ? '未填写' : '请输入负责人'}
-        fieldProps={{
-          readOnly,
-        }}
       />
 
       <ProFormText
         name="phone"
         label="联系电话"
         placeholder={readOnly ? '未填写' : '请输入联系电话'}
-        fieldProps={{
-          readOnly,
-        }}
       />
 
-      <ProFormText
-        name="email"
-        label="邮箱"
-        placeholder={readOnly ? '未填写' : '请输入邮箱'}
-        fieldProps={{
-          readOnly,
-        }}
-      />
+      <ProFormText name="email" label="邮箱" placeholder={readOnly ? '未填写' : '请输入邮箱'} />
 
-      {readOnly ? (
-        <ProFormText
-          label="状态"
-          fieldProps={{
-            readOnly: true,
-            value: initialValues?.status === 1 ? '启用' : '禁用',
-          }}
-        />
-      ) : (
-        <ProFormRadio.Group
-          name="status"
-          label="状态"
-          options={[
-            {
-              label: '启用',
-              value: 1,
-            },
-            {
-              label: '禁用',
-              value: 0,
-            },
-          ]}
-          rules={[{ required: true, message: '请选择状态' }]}
-        />
-      )}
+      <ProFormRadio.Group
+        name="status"
+        label="状态"
+        options={[
+          {
+            label: '启用',
+            value: 1,
+          },
+          {
+            label: '禁用',
+            value: 0,
+          },
+        ]}
+        rules={[{ required: true, message: '请选择状态' }]}
+      />
     </ModalForm>
   );
 };

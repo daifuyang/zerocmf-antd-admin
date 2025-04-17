@@ -20,10 +20,16 @@ export default [
     component: './User/Login',
   },
   {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: './Welcome',
+    path: '/account',
+    name: 'account',
+    hideInMenu: true,
+    routes: [
+      {
+        path: '/account/settings',
+        name: 'settings',
+        component: './Account/Settings',
+      },
+    ],
   },
   {
     path: '/user',

@@ -15,7 +15,6 @@ import _ from 'lodash';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/login';
-
 /**
  * 递归查找树形结构中的第一个最深子节点
  * @param {Array} nodes - 树形结构的节点数组
@@ -54,6 +53,7 @@ export async function getInitialState(): Promise<{
   loginPath?: string;
   fetchMenus?: () => Promise<any[] | undefined>;
   menus?: any[];
+  homePage?: string;
 }> {
   const fetchUserInfo = async () => {
     try {
@@ -63,7 +63,6 @@ export async function getInitialState(): Promise<{
       if (res.code === 1) {
         return res.data as API.User;
       }
-
     } catch (error) {
       history.push(loginPath);
     }
@@ -74,6 +73,8 @@ export async function getInitialState(): Promise<{
     try {
       const res = await getMenus({
         skipErrorHandler: true,
+      } as API.getMenusParams & {
+        skipErrorHandler: true;
       });
       if (res.code === 1) {
         return res.data as any[];
@@ -88,8 +89,13 @@ export async function getInitialState(): Promise<{
   if (location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
     let menus: any = [];
+    let homePage;
     if (currentUser) {
       menus = await fetchMenus();
+      if (menus && menus.length > 0) {
+        const node: any = findFirstDeepestNode(menus);
+        homePage = node.path;
+      }
     }
     return {
       fetchUserInfo,
@@ -98,7 +104,8 @@ export async function getInitialState(): Promise<{
       settings: defaultSettings as Partial<LayoutSettings>,
       loginPath,
       menus,
-      fullLayout: false
+      fullLayout: false,
+      homePage
     };
   }
 
@@ -107,7 +114,7 @@ export async function getInitialState(): Promise<{
     fetchMenus,
     settings: defaultSettings as Partial<LayoutSettings>,
     loginPath,
-    fullLayout: false
+    fullLayout: false,
   };
 }
 
@@ -116,6 +123,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   return {
     className: initialState?.fullLayout ? 'full-layout' : '',
     actionsRender: () => [<Question key="doc" />, <SelectLang key="SelectLang" />],
+    onMenuHeaderClick: () => {
+      console.log('onMenuHeaderClick', initialState?.homePage);
+      if (initialState?.homePage) {
+        history.push(initialState.homePage);
+      }
+    },
     avatarProps: {
       src: initialState?.currentUser?.avatar || '/assets/images/avatar.png',
       title: <AvatarName />,
@@ -124,7 +137,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       },
     },
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.currentUser?.loginName,
     },
     menu: {
       locale: false,
@@ -145,12 +158,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       // 跳转到菜单第一个菜单
       if (location.pathname === '/') {
         const menus = initialState?.menus;
-        if (menus && menus.length > 0) {
-          const node: any = findFirstDeepestNode(menus);
-          history.push(node.path);
+        if (menus && menus.length > 0 && initialState?.homePage) {
+          history.push(initialState.homePage);
         }
       }
-
     },
     bgLayoutImgList: [
       {
@@ -174,11 +185,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ],
     links: isDev
       ? [
-        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-          <LinkOutlined />
-          <span>OpenAPI 文档</span>
-        </Link>,
-      ]
+          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+            <LinkOutlined />
+            <span>OpenAPI 文档</span>
+          </Link>,
+        ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面

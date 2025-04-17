@@ -381,6 +381,7 @@ const MediaPicker: React.FC<MediaPickerProps> = (props) => {
 
 // ImagePicker组件作为MediaPicker的子组件导出
 export const ImagePicker: React.FC<ImagePickerProps> = (props) => {
+  console.log('props', props);
   const { value, onChange } = props;
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
   

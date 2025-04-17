@@ -72,45 +72,24 @@ export async function getMedia(
   });
 }
 
-/** 更新媒体资源 更新指定id的媒体资源 PUT /api/v1/admin/medias/${param0} */
+/** 更新媒体资源备注名称 更新指定id的媒体资源备注名称(remarkName)，不修改实际文件 PUT /api/v1/admin/medias/${param0} */
 export async function updateMedia(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.updateMediaParams,
   body: {
-    /** 文件类型，例如 image 或 video */
-    type?: string;
+    /** 新的备注名称 */
+    remarkName: string;
   },
-  file?: File,
   options?: { [key: string]: any },
 ) {
   const { mediaId: param0, ...queryParams } = params;
-  const formData = new FormData();
-
-  if (file) {
-    formData.append('file', file);
-  }
-
-  Object.keys(body).forEach((ele) => {
-    const item = (body as any)[ele];
-
-    if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
-        if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
-        } else {
-          formData.append(ele, JSON.stringify(item));
-        }
-      } else {
-        formData.append(ele, item);
-      }
-    }
-  });
-
   return request<API.MediaResp>(`/api/v1/admin/medias/${param0}`, {
     method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     params: { ...queryParams },
-    data: formData,
-    requestType: 'form',
+    data: body,
     ...(options || {}),
   });
 }
