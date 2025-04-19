@@ -2,21 +2,10 @@
 /* eslint-disable */
 import { request } from '@umijs/max';
 
-/** 获取医院列表 返回医院列表，支持分页 GET /api/v1/admin/hospitals */
-export async function getHospitals(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getHospitalsParams,
-  options?: { [key: string]: any },
-) {
+/** 获取医院列表 GET /api/v1/admin/hospitals */
+export async function getHospitalList(options?: { [key: string]: any }) {
   return request<API.HospitalListResp>('/api/v1/admin/hospitals', {
     method: 'GET',
-    params: {
-      // current has a default value: 1
-      current: '1',
-      // pageSize has a default value: 10
-      pageSize: '10',
-      ...params,
-    },
     ...(options || {}),
   });
 }
@@ -34,9 +23,9 @@ export async function createHospital(body: API.HospitalInput, options?: { [key: 
 }
 
 /** 获取单个医院 GET /api/v1/admin/hospitals/${param0} */
-export async function getHospitalById(
+export async function getHospital(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getHospitalByIdParams,
+  params: API.getHospitalParams,
   options?: { [key: string]: any },
 ) {
   const { hospitalId: param0, ...queryParams } = params;

@@ -1,6 +1,6 @@
 import { PageContainer, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { getCustomers, deleteCustomer } from '@/services/ant-design-pro/customer';
+import { getCustomerList, deleteCustomer } from '@/services/ant-design-pro/customer';
 import { Button, message } from 'antd';
 import { history } from 'umi';
 
@@ -31,16 +31,14 @@ const CustomerList: React.FC = () => {
       key: 'mobile',
     },
     {
-      title: '年龄',
-      key: 'age',
-      render: (_, record) => {
-        return record.birthDate;
-      },
+      title: '出生日期',
+      dataIndex: 'birthDate',
+      key: 'birthDate',
     },
     {
       title: '操作客服',
-      dataIndex: ['operator', 'name'],
       key: 'operator',
+      render: (_, record) => record.operator ? record.operator.name : '-',
     },
     {
       title: '整形项目',
@@ -51,7 +49,6 @@ const CustomerList: React.FC = () => {
       title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      render: (_, record) => record.createdTime,
     },
     {
       title: '状态',
@@ -66,7 +63,7 @@ const CustomerList: React.FC = () => {
         <a
           key="edit"
           onClick={() => {
-            history.push(`/mbcrm/customer/edit/${record.id}`);
+            history.push(`/mbcrm/customer/edit/${record.customerId}`);
           }}
         >
           编辑
@@ -75,7 +72,7 @@ const CustomerList: React.FC = () => {
           key="delete"
           onClick={async () => {
             try {
-              await deleteCustomer({ customerId: record.id });
+              await deleteCustomer({ customerId: record.customerId });
               message.success('删除成功');
               window.location.reload();
             } catch (error) {
@@ -94,13 +91,13 @@ const CustomerList: React.FC = () => {
       <ProTable<API.Customer>
         columns={columns}
         request={async (params) => {
-          const response = await getCustomers(params);
+          const response = await getCustomerList(params);
           return {
             ...response.data,
             success: true,
           };
         }}
-        rowKey="id"
+        rowKey="customerId"
         search={{
           labelWidth: 'auto',
         }}

@@ -349,6 +349,10 @@ export default [
             path: '/mbcrm/customer/list',
             component: './Mbcrm/customer/index',
           },
+          {
+            path: '/mbcrm/customer/create',
+            component: './Mbcrm/customer/save',
+          },
         ],
       },
     ],

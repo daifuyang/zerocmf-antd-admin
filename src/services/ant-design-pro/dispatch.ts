@@ -11,9 +11,9 @@ export async function createDispatch(options?: { [key: string]: any }) {
 }
 
 /** Get dispatch by ID Returns a single dispatch record GET /api/v1/admin/dispatch/${param0} */
-export async function getDispatchById(
+export async function getDispatch(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getDispatchByIdParams,
+  params: API.getDispatchParams,
   options?: { [key: string]: any },
 ) {
   const { dispatchId: param0, ...queryParams } = params;
@@ -53,9 +53,9 @@ export async function deleteDispatch(
 }
 
 /** Get dispatch list Returns a paginated list of dispatch records GET /api/v1/admin/dispatch/list */
-export async function getDispatches(
+export async function getDispatchList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getDispatchesParams,
+  params: API.getDispatchListParams,
   options?: { [key: string]: any },
 ) {
   return request<any>('/api/v1/admin/dispatch/list', {

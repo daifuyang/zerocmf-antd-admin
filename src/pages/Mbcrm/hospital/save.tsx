@@ -8,11 +8,7 @@ import {
 } from '@ant-design/pro-components';
 import { useRequest, history, useParams } from 'umi';
 import { useEffect, useRef } from 'react';
-import {
-  getHospitalById,
-  updateHospital,
-  createHospital,
-} from '@/services/ant-design-pro/hospital';
+import { getHospital, updateHospital, createHospital } from '@/services/ant-design-pro/hospital';
 import { Card, message, Space } from 'antd';
 
 const HospitalForm = () => {
@@ -20,7 +16,7 @@ const HospitalForm = () => {
   const formRef = useRef<any>();
   const { data: hospital } = useRequest<{ data: any }>(() => {
     if (hospitalId) {
-      return getHospitalById({ hospitalId });
+      return getHospital({ hospitalId: Number(hospitalId) });
     }
     return Promise.resolve({ data: null });
   });
@@ -30,7 +26,7 @@ const HospitalForm = () => {
       if (hospitalId) {
         await updateHospital(
           {
-            hospitalId,
+            hospitalId: Number(hospitalId),
           },
           values,
         );
@@ -47,7 +43,9 @@ const HospitalForm = () => {
 
   useEffect(() => {
     if (hospital) {
-      const formData = { ...hospital, loginName: hospital.user.loginName };
+      // Safely access user.loginName
+      const loginName = hospital.user ? hospital.user.loginName : undefined;
+      const formData = { ...hospital, loginName };
       formRef.current?.setFieldsValue(formData);
     }
   }, [hospital]);
@@ -74,7 +72,7 @@ const HospitalForm = () => {
               rules={hospitalId ? [] : [{ required: true, message: '用户名不能为空' }]}
               fieldProps={{
                 autoComplete: 'off',
-                disabled: true
+                disabled: hospitalId ? true : false,
               }}
               colProps={{ span: 12 }}
             />

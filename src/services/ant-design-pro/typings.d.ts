@@ -172,7 +172,7 @@ declare namespace API {
   };
 
   type Customer = {
-    id: number;
+    customerId: number;
     memberNo?: string;
     name: string;
     birthDate: string;
@@ -188,8 +188,9 @@ declare namespace API {
     project?: string;
     status?: number;
     remark?: string;
-    createdTime?: string;
-    updatedTime?: string;
+    operatorId: number;
+    createdAt?: number;
+    updatedAt?: number;
   };
 
   type CustomerInput = {
@@ -213,7 +214,13 @@ declare namespace API {
   type CustomerListResp =
     // #/components/schemas/Response
     Response & {
-      data?: Pagination & { data: Customer[]; statusOptions: { value?: number; label?: string }[] };
+      data?: {
+        total?: number;
+        data?: Customer[];
+        current?: number;
+        pageSize?: number;
+        statusOptions?: { value?: number; label?: string }[];
+      };
     };
 
   type deleteArticleCategoryParams = {
@@ -249,7 +256,7 @@ declare namespace API {
   };
 
   type deleteHospitalParams = {
-    hospitalId: string;
+    hospitalId: number;
   };
 
   type deleteMediaCategoryParams = {
@@ -520,21 +527,16 @@ declare namespace API {
     pageSize?: number;
   };
 
-  type getCustomerByIdParams = {
-    customerId: string;
+  type getCustomerListParams = {
+    current?: number;
+    pageSize?: number;
+    name?: string;
+    mobile?: string;
+    status?: number;
   };
 
-  type getCustomersParams = {
-    /** 当前页码 */
-    current?: number;
-    /** 每页条数 */
-    pageSize?: number;
-    /** 客户姓名 */
-    name?: string;
-    /** 手机号码 */
-    mobile?: string;
-    /** 客户状态 */
-    status?: number;
+  type getCustomerParams = {
+    customerId: number;
   };
 
   type getDeptListParams = {
@@ -599,12 +601,7 @@ declare namespace API {
     dictId: number;
   };
 
-  type getDispatchByIdParams = {
-    /** ID of dispatch to return */
-    dispatchId: any;
-  };
-
-  type getDispatchesParams = {
+  type getDispatchListParams = {
     ''?: any;
     ''?: any;
     /** Filter by hospital ID */
@@ -615,15 +612,13 @@ declare namespace API {
     status?: any;
   };
 
-  type getHospitalByIdParams = {
-    hospitalId: string;
+  type getDispatchParams = {
+    /** ID of dispatch to return */
+    dispatchId: any;
   };
 
-  type getHospitalsParams = {
-    /** 当前页码 */
-    current?: number;
-    /** 每页条数 */
-    pageSize?: number;
+  type getHospitalParams = {
+    hospitalId: number;
   };
 
   type getLoginLogDetailParams = {
@@ -783,24 +778,41 @@ declare namespace API {
   };
 
   type Hospital = {
-    id: string;
-    name: string;
-    address: string;
-    phone: string;
-    createdAt?: string;
-    updatedAt?: string;
+    hospitalId: number;
+    hospitalName: string;
+    email?: string;
+    province?: string;
+    city?: string;
+    district?: string;
+    address?: string;
+    phone?: string;
+    avgPrice?: number;
+    website?: string;
+    hospitalType: number;
+    contactName?: string;
+    contactPhone?: string;
+    contactQQ?: string;
+    contactWechat?: string;
+    status: number;
+    createdAt?: number;
+    updatedAt?: number;
   };
 
   type HospitalInput = {
-    name: string;
-    address: string;
-    phone: string;
+    hospitalName: string;
+    email?: string;
+    province?: string;
+    city?: string;
+    district?: string;
+    address?: string;
+    phone?: string;
+    hospitalType: number;
   };
 
   type HospitalListResp =
     // #/components/schemas/Response
     Response & {
-      data?: Pagination & { data: Hospital[] };
+      data?: Hospital[];
     };
 
   type LoginLog = {
@@ -1051,10 +1063,9 @@ declare namespace API {
     /** 当前页码 */
     page?: number;
     /** 每页显示的数据条数 */
-    pageSize: number;
+    pageSize?: number;
     /** 总数据条数 */
-    total: number;
-    current: number;
+    total?: number;
   };
 
   type PhoneLoginType = 'sms' | 'password';
@@ -1118,7 +1129,6 @@ declare namespace API {
     code: number;
     /** Response message */
     msg: string;
-    data?: Record<string, any>;
   };
 
   type Role = {
@@ -1207,7 +1217,7 @@ declare namespace API {
   };
 
   type updateCustomerParams = {
-    customerId: string;
+    customerId: number;
   };
 
   type updateDeptParams = {
@@ -1231,7 +1241,7 @@ declare namespace API {
   };
 
   type updateHospitalParams = {
-    hospitalId: string;
+    hospitalId: number;
   };
 
   type updateMediaCategoryParams = {

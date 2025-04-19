@@ -2,10 +2,10 @@
 /* eslint-disable */
 import { request } from '@umijs/max';
 
-/** 获取客户列表 返回客户列表，支持分页 GET /api/v1/admin/customers */
-export async function getCustomers(
+/** 获取客户列表 GET /api/v1/admin/customers */
+export async function getCustomerList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getCustomersParams,
+  params: API.getCustomerListParams,
   options?: { [key: string]: any },
 ) {
   return request<API.CustomerListResp>('/api/v1/admin/customers', {
@@ -35,9 +35,9 @@ export async function createCustomer(body: API.CustomerInput, options?: { [key: 
 }
 
 /** 获取单个客户 GET /api/v1/admin/customers/${param0} */
-export async function getCustomerById(
+export async function getCustomer(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getCustomerByIdParams,
+  params: API.getCustomerParams,
   options?: { [key: string]: any },
 ) {
   const { customerId: param0, ...queryParams } = params;

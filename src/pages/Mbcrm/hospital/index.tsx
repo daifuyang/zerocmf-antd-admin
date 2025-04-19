@@ -1,7 +1,7 @@
 import { PageContainer, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { 
-  getHospitals,
+  getHospitalList,
   deleteHospital 
 } from '@/services/ant-design-pro/hospital';
 import { Button, message } from 'antd';
@@ -81,7 +81,7 @@ const HospitalList = () => {
       <ProTable<API.Hospital>
         columns={columns}
         request={async (params) => {
-          const response = await getHospitals(params);
+          const response = await getHospitalList(params);
           return {
             ...response.data,
             success: true,
